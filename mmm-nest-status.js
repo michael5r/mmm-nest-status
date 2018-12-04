@@ -13,7 +13,7 @@ Module.register('mmm-nest-status', {
 
     defaults: {
         token: '',
-        displayType: 'visual',
+        displayType: 'grid',
         displayMode: 'all',
         showNames: true,
         thermostatsToShow: 'all',
@@ -98,7 +98,7 @@ Module.register('mmm-nest-status', {
             }
 
         } else {
-            // visual mode view
+            // grid mode view
 
             if ((alignment === 'center') || (alignment ==='left') || (alignment ==='right')) {
                 outer_wrapper.className = 'nest-wrapper ' + alignment;
@@ -113,17 +113,17 @@ Module.register('mmm-nest-status', {
                 outer_wrapper.className = '';
             }
 
-            // gets a visual view of Nest thermostats
+            // gets a grid view of Nest thermostats
             if ((displayMode !== 'protect') && (numberOfThermostats > 0)) {
 
                 if (this.isString(thermostatsToShow)) {
                     // we only allow options of 'first' and 'all'
 
                     if (thermostatsToShow === 'first') {
-                        thermostat_outer_wrapper.appendChild(this.renderThermostatVisual(0));
+                        thermostat_outer_wrapper.appendChild(this.renderThermostatGrid(0));
                     } else {
                         for (i = 0; i < numberOfThermostats; i++) {
-                            thermostat_outer_wrapper.appendChild(this.renderThermostatVisual(i));
+                            thermostat_outer_wrapper.appendChild(this.renderThermostatGrid(i));
                         }
                     }
 
@@ -133,7 +133,7 @@ Module.register('mmm-nest-status', {
                     for (i = 0; i < thermostatsToShow.length; i++) {
                         var val = thermostatsToShow[i];
                         if ((this.isNumber(val)) && (val < numberOfThermostats)) {
-                            thermostat_outer_wrapper.appendChild(this.renderThermostatVisual(val));
+                            thermostat_outer_wrapper.appendChild(this.renderThermostatGrid(val));
                         }
                     }
 
@@ -148,17 +148,17 @@ Module.register('mmm-nest-status', {
                 }
             }
 
-            // gets a visual view of Nest protects
+            // gets a grid view of Nest protects
             if ((displayMode !== 'thermostat') && (numberOfProtects > 0)) {
 
                 if (this.isString(protectsToShow)) {
                     // we only allow options of 'first' and 'all'
 
                     if (protectsToShow === 'first') {
-                        protect_outer_wrapper.appendChild(this.renderProtectVisual(0));
+                        protect_outer_wrapper.appendChild(this.renderProtectGrid(0));
                     } else {
                         for (i = 0; i < numberOfProtects; i++) {
-                            protect_outer_wrapper.appendChild(this.renderProtectVisual(i));
+                            protect_outer_wrapper.appendChild(this.renderProtectGrid(i));
                         }
                     }
 
@@ -168,7 +168,7 @@ Module.register('mmm-nest-status', {
                     for (i = 0; i < protectsToShow.length; i++) {
                         var val = protectsToShow[i];
                         if ((this.isNumber(val)) && (val < numberOfProtects)) {
-                            protect_outer_wrapper.appendChild(this.renderProtectVisual(val));
+                            protect_outer_wrapper.appendChild(this.renderProtectGrid(val));
                         }
                     }
 
@@ -188,7 +188,7 @@ Module.register('mmm-nest-status', {
         return outer_wrapper;
     },
 
-    renderThermostatVisual: function(tId) {
+    renderThermostatGrid: function(tId) {
         // renders a single Nest thermostat
 
         var thermostat = this.thermostats[tId];
@@ -419,7 +419,7 @@ Module.register('mmm-nest-status', {
 
     },
 
-    renderProtectVisual: function(pId) {
+    renderProtectGrid: function(pId) {
         // renders a single Nest protect
 
         var protect = this.protects[pId];

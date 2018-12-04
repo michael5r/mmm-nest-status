@@ -152,7 +152,7 @@
 }
 
 /*
-    VISUAL VIEW: SHARED
+    GRID VIEW: SHARED
 */
 
 .mmm-nest-status .nest-wrapper .title {
@@ -186,7 +186,7 @@
 }
 
 /*
-    VISUAL VIEW: PROTECT
+    GRID VIEW: PROTECT
 */
 
 .mmm-nest-status .nest-wrapper .protect .circle {
@@ -310,7 +310,7 @@
 
 
 /*
-    VISUAL VIEW: PROTECT (SMALL VERSION)
+    GRID VIEW: PROTECT (SMALL VERSION)
 */
 
 .mmm-nest-status .nest-wrapper .protect.sml {
@@ -371,7 +371,7 @@
 
 
 /*
-    VISUAL VIEW: THERMOSTAT
+    GRID VIEW: THERMOSTAT
     Thermostat gets one class from each of the following groups:
     - heating, cooling, off (from hvacState)
     - heat, cool, heat-cool, eco (from hvacMode)

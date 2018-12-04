@@ -10,7 +10,7 @@ This module displays both your [Nest](https://www.nest.com) thermostats and prot
 ## Key Features
 - all design states for the Nest thermostat, including Eco mode and leaf/fan icons
 - all design states for the Nest protect plus `dark` and `small` variations to better fit into your mirror theme
-- choose between `visual` and `list` mode to display your devices
+- choose between `grid` and `list` mode to display your devices
 - choose to display all your thermostats/protects, or pick & choose which devices to show
 - choose to display the name of the thermostat/protect for easy identification
 - group the thermostats and protects together, or split them up into stackable containers
@@ -43,16 +43,16 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
 | Key | What it Does | Values | Default | Notes |
 |---|---|---|---|---|
 | `token` | Your Nest API token. | -- | -- | **This value is required for this module to work.** |
-| `displayType` | Choose between a visual view or a list view. | `visual`, `list`, `list-id` | `visual` | `list-id` is the same as `list`, but shows device IDs in the list as well. |
+| `displayType` | Choose between a grid view or a list view. | `grid`, `list`, `list-id` | `grid` | `list-id` is the same as `list`, but shows device IDs in the list as well. |
 | `displayMode` | Which devices to display. | `thermostat`, `protect`, `all` | `all` | -- |
 | `thermostatsToShow` | Which thermostats to display. | `all`, `first`, `[]` | `all` | Accepts an `array` of device IDs - you can get the IDs from setting the `displayType` to `list-id`. |
 | `protectsToShow` | Which protects to display. | `all`, `first`, `[]` | `all` | Accepts an `array` of device IDs - you can get the IDs from setting the `displayType` to `list-id`. |
 | `units` | Which temperature units to use. | `imperial` (fahrenheit), `metric` (celsius) | Specified by MM's `config.js` | If, for some reason, you wish to override your `config.js` settings for `units`, this is where you do it. |
 | `updateInterval` | How often to update the Nest data. | value in `ms` | `60000ms` (aka 1 minute) | Nest recommends updating no more than once pr. minute. |
 
-## Configuration Options specific to the Visual view
+## Configuration Options specific to the Grid view
 
-**The following options only apply if your `displayType` has been set to `visual` - they have no effect on the list view:**
+**The following options only apply if your `displayType` has been set to `grid` - they have no effect on the list view:**
 
 | Key | What it Does | Values | Default | Notes |
 |---|---|---|---|---|
@@ -65,15 +65,15 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
 
 ## How It Looks
 
-### Visual view: Thermostat
+### Grid view: Thermostat
 
 ![image](https://user-images.githubusercontent.com/3209660/49419333-f7fd9880-f74b-11e8-9e16-23aa80f6aa2d.png)
 
-### Visual view: Multiple Thermostats
+### Grid view: Multiple Thermostats
 
 ![image](https://user-images.githubusercontent.com/3209660/49419463-870ab080-f74c-11e8-8498-56a9f4f32e26.png)
 
-### Visual view: Protect
+### Grid view: Protect
 
 ![image](https://user-images.githubusercontent.com/3209660/49419889-82df9280-f74e-11e8-98e4-1aad5c080076.png)
 
@@ -81,7 +81,7 @@ By default the protects are the same dimensions as the thermostats - which means
 
 ![image](https://user-images.githubusercontent.com/3209660/49419962-d0f49600-f74e-11e8-8292-557a1249fc21.png)
 
-### Visual view: Protect (Dark Mode)
+### Grid view: Protect (Dark Mode)
 
 ![image](https://user-images.githubusercontent.com/3209660/49420474-3e092b00-f751-11e8-9317-76aea978fafc.png)
 
@@ -89,7 +89,7 @@ Lined up with thermostats:
 
 ![image](https://user-images.githubusercontent.com/3209660/49420527-7f99d600-f751-11e8-942b-97cf7dfa6d7f.png)
 
-### Visual view: Protect (Small Mode)
+### Grid view: Protect (Small Mode)
 
 The states are the same as the default (large) size of the protect - these are just smaller, so you can display more devices without filling up your entire mirror. Please note that if you're using the small version of the protects, the protects automatically sit in a box by themselves beneath any thermostats you might have.
 
