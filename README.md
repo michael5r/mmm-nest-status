@@ -96,7 +96,7 @@ Lined up with thermostats:
 
 ### Grid view: Protect (Small Mode)
 
-The states are the same as the default (large) size of the protect - these are just smaller, so you can display more devices without filling up your entire mirror. Please note that if you're using the small version of the protects, the protects automatically sit in a box by themselves beneath any thermostats you might have.
+The states are the same as the default (regular) size of the protect - these are just smaller, so you can display more devices without filling up your entire mirror. Please note that if you're using the small version of the protects, the protects automatically sit in a box by themselves beneath any thermostats you might have.
 
 **Regular mode:**
 
@@ -176,9 +176,9 @@ Make any changes you wish in the relevant `.hbs` files in the `templates` folder
 
 Once you're done, precompile all templates by running this in your terminal:
 ```js
-handlebars <path to your magic mirror modules folder>/mmm-nest-status/templates/*.hbs -f <path to your magic mirror modules folder>/mmm-nest-status/mmm-nest-status-templates.js -m
+handlebars <path-to-MM-modules>/mmm-nest-status/templates/*.hbs -f <path-to-MM-modules>/mmm-nest-status/mmm-nest-status-templates.js -m
 ```
 
-Make sure you replace `<path to your magic mirror modules folder>` with the correct file path to your Magic Mirror `modules` folder.
+Make sure you replace `<path-to-MM-modules>` with the correct file path to your Magic Mirror `modules` folder.
 
 If you have any problems, check out the [Handlebars](http://handlebarsjs.com/precompilation.html) documentation (or open an issue in this repo).
