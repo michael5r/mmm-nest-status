@@ -1,0 +1,16 @@
+<div class="thermostat thermostat-{{ id }} {{ classState }} {{ classMode }} {{ classSize }}">
+    {{#if showNames}}
+        <header class="title">{{{ name }}}</header>
+    {{/if}}
+    <div class="circle">
+        <div class="dial"></div>
+        <span class="status {{ statusClass }}">{{ ambientTemp }}</span>
+        <div class="temp">{{{ targetTemp }}}</div>
+    </div>
+    <div class="humidity">{{ humidity }}</div>
+    {{#if fanOn}}
+        <span class="icn fan"></span>
+    {{else if leafOn}}
+        <span class="icn leaf"></span>
+    {{/if}}
+</div>

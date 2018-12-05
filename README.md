@@ -38,6 +38,10 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
 },
 ```
 
+This module uses the excellent [Handlebars](http://handlebarsjs.com) library to serve up precompiled templates for the various designs. If you're just using this module **as is**, you don't need to do anything - this module already comes with all the templates you need.
+
+If, however, you wish to modify the HTML structure of the thermostats or smoke detectors, read the [Using Handlebars](#using-handlebars) guide at the bottom of this page.
+
 ## General Configuration Options
 
 | Key | What it Does | Values | Default | Notes |
@@ -59,6 +63,7 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
 | `showNames` | Whether to show the device name or not. | `true`, `false` | `true` | Displays the device name above the device. |
 | `alignment` | How the elements should be aligned on screen. | `left`, `center`, `right` | `left` | If you have a lot of devices, the `center` mode looks nicer. |
 | `groupTogether` | Whether all devices should be in a single box. | `true`, `false` | `true` | If this is set to `false`, thermostats will be in one box and protects will be in another box underneath. |
+| `thermostatSize` | Size of the Nest thermostat. | `small`, `regular` | `regular` | Feel free to mix & match with the protect size below. |
 | `protectSize` | Size of the Protect smoke detector. | `small`, `regular` | `regular` | If you have a lot of protects, use the `small` size. |
 | `protectDarkMode` | Switches protects to use the dark design. | `true`, `false` | `false` | Dark mode for the protects. Works great with the `small` mode above. |
 | `protectShowOk` | Toggles the `ok` text in a green protect. | `true`, `false` | `true` | If everything is ok with the protect, this shows the text `ok`. |
@@ -156,3 +161,24 @@ If you don't own this font, this module will just fall back to using the standar
 ### Does this module support touch or mouse interactions? Eg. can I change the temperature of my thermostat using this?
 
 No, right now this module only displays information - it does not allow you to control your Nest devices.
+
+## Using Handlebars
+
+The Handlebars templates can all be found in the `templates` folder in the root of this module.
+
+Before you do anything, if you don't have Handlebars installed, install it globally on your system:
+
+```js
+npm install handlebars -g
+```
+
+Make any changes you wish in the relevant `.hbs` files in the `templates` folder.
+
+Once you're done, precompile all templates by running this in your terminal:
+```js
+handlebars <path to your magic mirror modules folder>/mmm-nest-status/templates/*.hbs -f <path to your magic mirror modules folder>/mmm-nest-status/mmm-nest-status-templates.js -m
+```
+
+Make sure you replace `<path to your magic mirror modules folder>` with the correct file path to your Magic Mirror `modules` folder.
+
+If you have any problems, check out the [Handlebars](http://handlebarsjs.com/precompilation.html) documentation (or open an issue in this repo).
