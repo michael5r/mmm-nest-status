@@ -120,6 +120,10 @@
     text-align: left;
 }
 
+.mmm-nest-status .nest-list th.name {
+    text-transform: capitalize;
+}
+
 .mmm-nest-status .nest-list td.heating,
 .mmm-nest-status .nest-list td.cooling {
     color: #fff;

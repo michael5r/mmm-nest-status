@@ -20,23 +20,35 @@ Module.register('mmm-nest-status', {
         protectsToShow: 'all',
         alignment: 'left',
         groupTogether: true,
+        thermostatSize: 'regular',
         protectSize: 'regular',
         protectDarkMode: false,
         protectShowOk: true,
         units: config.units,
         updateInterval: 60 * 1000,
         animationSpeed: 2 * 1000,
-        initialLoadDelay: 0
+        initialLoadDelay: 0,
+        version: '1.0.1'
+    },
+
+    getScripts: function() {
+        return [
+            'handlebars.runtime.min-v4.0.12.js',
+            'mmm-nest-status-templates.js'
+        ];
     },
 
     getStyles: function() {
-        return ['mmm-nest-status.css'];
+        return [
+            'mmm-nest-status.css'
+        ];
     },
 
     start: function() {
 
-        Log.info('Starting module: ' + this.name);
+        Log.info('Starting module: ' + this.name + ', version ' + this.config.version);
 
+        // TODO: change, so this only happens if small protects are used with large thermostats
         // if the small protect size option is chosen, groupTogether becomes false
         // so the smaller version of the Protects are shown in their own container
         if (this.config.protectSize === 'small') {
@@ -89,12 +101,12 @@ Module.register('mmm-nest-status', {
 
             // gets a list view of Nest thermostats
             if ((displayMode !== 'protect') && (numberOfThermostats > 0)) {
-                outer_wrapper.appendChild(this.renderThermostatTable());
+                outer_wrapper.appendChild(this.renderList('thermostat'));
             }
 
             // gets a list view of Nest protects
             if ((displayMode !== 'thermostat') && (numberOfProtects > 0)) {
-                outer_wrapper.appendChild(this.renderProtectTable());
+                outer_wrapper.appendChild(this.renderList('protect'));
             }
 
         } else {
@@ -188,447 +200,233 @@ Module.register('mmm-nest-status', {
         return outer_wrapper;
     },
 
-    renderThermostatGrid: function(tId) {
+    renderThermostatGrid: function(id) {
         // renders a single Nest thermostat
 
-        var thermostat = this.thermostats[tId];
+        var t = this.thermostats[id];
         var showNames = this.config.showNames;
 
-        var isHeating = thermostat.hvacState === 'heating';
-        var isCooling = thermostat.hvacState === 'cooling';
-        var isNotDoingAnything = thermostat.hvacState === 'off';
+        var thermostatSize = this.config.thermostatSize;
 
-        var isHeatCoolMode = thermostat.hvacMode === 'heat-cool';
-        var isEcoMode = thermostat.hvacMode === 'eco';
+        var hbWrapper = document.createElement('div');
+        var statusClass = '';
+        var targetTemp = t.targetTemp;
 
-        var wrapper = document.createElement('div');
-        wrapper.id = 'wrapper-thermostat-' + tId;
-
-        // set up master classes
-        wrapper.classList.add('thermostat', thermostat.hvacState);
-        if (thermostat.hvacMode !== 'off') {
-            wrapper.classList.add(thermostat.hvacMode);
-        }
-
-        // set up elements
-        var circle = document.createElement('div');
-        var dial = document.createElement('div');
-        var status = document.createElement('span');
-        var temperature = document.createElement('div');
-        var humidity = document.createElement('div');
-
-        // add title
-        if (showNames) {
-            var title = document.createElement('header');
-            title.innerHTML = thermostat.name.replace(/ *\([^)]*\) */g, '');
-            title.className = 'title';
-            wrapper.appendChild(title);
-        }
-
-        // add dial to circle
-        dial.className = 'dial';
-        circle.appendChild(dial);
-
-        // add status to circle
-        status.classList.add('status');
-        status.innerHTML = thermostat.ambientTemp;
-
-        if (isNotDoingAnything) {
-            if ((!isHeatCoolMode) && (!isEcoMode)) {
-                if (parseInt(thermostat.ambientTemp) < parseInt(thermostat.targetTemp)) {
-                    status.classList.add('heat');
-                } else if (parseInt(thermostat.ambientTemp) > parseInt(thermostat.targetTemp)) {
-                    status.classList.add('cool');
+        if (t.isOff) {
+            if ((!t.isHeatCoolMode) && (!t.isEcoMode)) {
+                if (parseInt(t.ambientTemp) < parseInt(t.targetTemp)) {
+                    statusClass = 'heat';
+                } else if (parseInt(t.ambientTemp) > parseInt(t.targetTemp)) {
+                    statusClass = 'cool';
                 } else {
-                    status.classList.add('hidden');
+                    statusClass = 'hidden';
                 }
             }
         }
-        circle.appendChild(status);
 
-        // add temperature to circle
-        var innerTemp = thermostat.targetTemp;
-        if (isHeatCoolMode) {
-            innerTemp = thermostat.targetTempLow + '<small>&bull;</small>' + thermostat.targetTempHigh;
-        } else if (isEcoMode) {
-            innerTemp = 'ECO';
-        }
-        temperature.innerHTML = innerTemp;
-        temperature.className = 'temp';
-        circle.appendChild(temperature);
-
-        // add circle
-        circle.className = 'circle';
-        wrapper.appendChild(circle);
-
-        // add humidity
-        humidity.innerHTML = thermostat.humidity + '%';
-        humidity.className = 'humidity';
-        wrapper.appendChild(humidity);
-
-        if ((thermostat.fanOn) || (thermostat.leafOn)) {
-            var icon = document.createElement('span');
-            icon.className = thermostat.fanOn ? 'icn fan' : 'icn leaf';
-            wrapper.appendChild(icon);
+        if (t.isHeatCoolMode) {
+            targetTemp = t.targetTempLow + '<small>&bull;</small>' + t.targetTempHigh;
+        } else if (t.isEcoMode) {
+            targetTemp = 'ECO';
         }
 
-        return wrapper;
+        // create handlebars data object
+        var hbData = {
+            id,
+            name: t.name.replace(/ *\([^)]*\) */g, ''),
+            classSize: (thermostatSize === 'small') ? 'sml' : 'reg',
+            classState: t.hvacState,
+            classMode: (t.hvacMode !== 'off') ? t.hvacMode : '',
+            showNames,
+            ambientTemp: t.ambientTemp,
+            targetTemp,
+            statusClass,
+            humidity: t.humidity + '%',
+            fanOn: t.fanOn,
+            leafOn: t.leafOn
+        };
+
+        // generate html from template
+        var hbTemplate = Handlebars.templates['grid_thermostat.hbs'];
+        var hbHtml     = hbTemplate(hbData);
+        hbWrapper.innerHTML = hbHtml;
+
+        return hbWrapper.firstChild;
 
     },
 
-    renderThermostatTable: function() {
-        // renders a list of all Nest thermostats
-
-        var displayMode = this.config.displayMode;
-        var displayType = this.config.displayType;
-
-        var numberOfThermostats = this.thermostats.length;
-        var numberOfProtects = this.protects.length;
-
-        var thermostatsToShow = this.config.thermostatsToShow;
-
-        var table = document.createElement('table');
-        table.classList.add('nest-list', 'xsmall', 'table');
-
-        var headerRow = document.createElement('tr');
-
-        var nameLabel = document.createElement('th');
-        var currentLabel = document.createElement('th');
-        var targetLabel = document.createElement('th');
-        var humidityLabel = document.createElement('th');
-
-        // set up header labels
-        nameLabel.className = 'name';
-        nameLabel.innerHTML = 'Thermostat Name';
-        currentLabel.innerHTML = 'Current';
-        targetLabel.innerHTML = 'Target';
-        humidityLabel.innerHTML = 'Humidity';
-
-        if (displayType === 'list-id') {
-            // add list ID to table
-            var idLabel = document.createElement('th');
-            idLabel.className = 'nest-id';
-            idLabel.innerHTML = 'ID';
-            headerRow.appendChild(idLabel);
-        }
-
-        // append header labels
-        headerRow.appendChild(nameLabel);
-        headerRow.appendChild(currentLabel);
-        headerRow.appendChild(targetLabel);
-        headerRow.appendChild(humidityLabel);
-
-        // append header to table
-        table.appendChild(headerRow);
-
-        // render rows
-        if (this.isString(thermostatsToShow)) {
-            // we only allow options of 'first' and 'all'
-
-            if (thermostatsToShow === 'first') {
-                table.appendChild(this.renderThermostatRow(0));
-            } else {
-                for (i = 0; i < numberOfThermostats; i++) {
-                    table.appendChild(this.renderThermostatRow(i));
-                }
-            }
-
-        } else if (this.isArray(thermostatsToShow)) {
-            // show selected thermostats
-
-            for (i = 0; i < thermostatsToShow.length; i++) {
-                var val = thermostatsToShow[i];
-                if ((this.isNumber(val)) && (val < numberOfThermostats)) {
-                    table.appendChild(this.renderThermostatRow(val));
-                }
-            }
-
-        }
-
-        if ((displayMode === 'all') && (numberOfProtects > 0)) {
-            table.classList.add('with-protects');
-        }
-
-        return table;
-
-    },
-
-    renderThermostatRow: function(tId) {
-        // renders a row with a single Nest thermostat
-
-        var displayType = this.config.displayType;
-
-        var thermostat = this.thermostats[tId];
-
-        var isHeating = thermostat.hvacState === 'heating';
-        var isCooling = thermostat.hvacState === 'cooling';
-
-        var isHeatCoolMode = thermostat.hvacMode === 'heat-cool';
-        var isEcoMode = thermostat.hvacMode === 'eco';
-
-        var row = document.createElement('tr');
-
-        if (displayType === 'list-id') {
-            // add id
-            var idCell = document.createElement('td');
-            idCell.className = 'nest-id';
-            idCell.innerHTML = tId;
-            row.appendChild(idCell);
-        }
-
-        // add name
-        var nameCell = document.createElement('td');
-        nameCell.className = 'name';
-        nameCell.innerHTML = thermostat.name;
-        row.appendChild(nameCell);
-
-        // add current temperature
-        var currentCell = document.createElement('td');
-        if (isEcoMode) {
-            currentCell.innerHTML = 'ECO';
-        } else {
-            currentCell.innerHTML = thermostat.ambientTemp + '&deg;';
-        }
-        row.appendChild(currentCell);
-
-        // add target temperature
-        var targetCell = document.createElement('td');
-        var targetText = thermostat.targetTemp + '&deg;'
-
-        if (isHeating) {
-            targetCell.className = 'heating';
-        } else if (isCooling) {
-            targetCell.className = 'cooling';
-        }
-
-        if (isHeatCoolMode) {
-            targetText = thermostat.targetTempLow + '&deg &bull; ' + thermostat.targetTempHigh + '&deg;';
-        } else if (isEcoMode) {
-            targetText = thermostat.ecoTempLow + '&deg &bull; ' + thermostat.ecoTempHigh + '&deg;';
-        }
-
-        targetCell.innerHTML = targetText;
-        row.appendChild(targetCell);
-
-        // add humidity
-        var humidityCell = document.createElement('td');
-        humidityCell.innerHTML = thermostat.humidity + '%';
-        row.appendChild(humidityCell);
-
-        return row;
-
-    },
-
-    renderProtectGrid: function(pId) {
+    renderProtectGrid: function(id) {
         // renders a single Nest protect
 
-        var protect = this.protects[pId];
+        var p = this.protects[id];
         var showNames = this.config.showNames;
         var protectSize = this.config.protectSize;
         var protectShowOk = this.config.protectShowOk;
         var protectDarkMode = this.config.protectDarkMode;
         var protectSmallMode = protectSize === 'small';
 
-        // check to see if we're using the dark version of the protects
-        var darkClass = protectDarkMode ? ' dark' : '';
-
-        // check to see if we're using the small version of the protects
-        var smallClass = protectSmallMode ? ' sml' : '';
-
         // if we're splitting thermostats and protects into
         // 2 different containers, the Protect title should move to the bottom
         var moveTitle = this.config.displayMode === 'all' && !this.config.groupTogether;
         var moveClass = moveTitle ? ' title-bot' : '';
 
-        var wrapper = document.createElement('div');
-        wrapper.id = 'wrapper-protect-' + pId;
-        wrapper.className = 'protect ' + protect.uiColor + moveClass + smallClass + darkClass;
-
-        // set up elements
-        var title = document.createElement('header');
-        var circle = document.createElement('div');
-        var ring = document.createElement('div');
-        var status = document.createElement('span');
-
-        // add title (top)
-        if (showNames) {
-            title.innerHTML = protect.name.replace(/ *\([^)]*\) */g, '');
-            title.className = 'title';
-            if (!moveTitle) {
-                wrapper.appendChild(title);
-            }
-        }
-
-        // add ring to circle
-        ring.className = 'ring';
-        circle.appendChild(ring);
-
-        // add status to circle
-        var statusText = (protectShowOk && protect.uiColor !== 'gray') ? 'OK' : '';
-
-        if (protect.uiColor !== 'green') {
-
+        // generate status text
+        var statusText = (protectShowOk && p.uiColor !== 'gray') ? 'OK' : '';
+        if (p.uiColor !== 'green') {
             // add emergency or warning texts
-            if ((protect.coState === 'emergency') && (protect.smokeState === 'emergency')) {
+            if ((p.coState === 'emergency') && (p.smokeState === 'emergency')) {
                 statusText = '<b>Smoke & CO2</b>' + (protectSmallMode ? '' : 'Emergency');
-            } else if (protect.coState === 'emergency') {
+            } else if (p.coState === 'emergency') {
                 statusText = '<b>CO2</b>' + (protectSmallMode ? '' : 'Emergency');
-            } else if (protect.smokeState === 'emergency') {
+            } else if (p.smokeState === 'emergency') {
                 statusText = '<b>Smoke</b>' + (protectSmallMode ? '' : 'Emergency');
-            } else if ((protect.coState === 'warning') && (protect.smokeState === 'warning')) {
+            } else if ((p.coState === 'warning') && (p.smokeState === 'warning')) {
                 statusText = '<b>Smoke & CO2</b>' + (protectSmallMode ? '' : 'Warning');
-            } else if (protect.coState === 'warning') {
+            } else if (p.coState === 'warning') {
                 statusText = '<b>CO2</b>' + (protectSmallMode ? '' : 'Warning');
-            } else if (protect.smokeState === 'warning') {
+            } else if (p.smokeState === 'warning') {
                 statusText = '<b>Smoke</b>' + (protectSmallMode ? '' : 'Warning');
-            } else if (protect.batteryHealth === 'replace') {
+            } else if (p.batteryHealth === 'replace') {
                 statusText = '<span class="icon-battery"></span>' + (protectSmallMode ? '' : 'Replace <b>Battery</b>');
-            } else if (!protect.isOnline) {
+            } else if (!p.isOnline) {
                 statusText = (protectSmallMode ? '' : 'Protect') + '<b>Offline</b>';
             }
-
         }
 
-        status.className = 'status';
-        status.innerHTML = statusText;
-        circle.appendChild(status);
+        var hbWrapper = document.createElement('div');
 
-        // add circle
-        circle.className = 'circle';
-        wrapper.appendChild(circle);
+        // create handlebars data object
+        var hbData = {
+            id,
+            name: p.name.replace(/ *\([^)]*\) */g, ''),
+            classColor: p.uiColor,
+            classMove: moveTitle ? ' title-bot' : '',
+            classDark: protectDarkMode ? ' dark' : '',
+            classSize: (protectSize === 'small') ? 'sml' : 'reg',
+            showNames,
+            moveTitle,
+            statusText
+        };
 
-        // add title (bottom)
-        if (showNames && moveTitle) {
-            wrapper.appendChild(title);
-        }
+        // generate html from template
+        var hbTemplate = Handlebars.templates['grid_protect.hbs'];
+        var hbHtml     = hbTemplate(hbData);
+        hbWrapper.innerHTML = hbHtml;
 
-        return wrapper;
+        return hbWrapper.firstChild;
 
     },
 
-    renderProtectTable: function() {
-        // renders a list of all Nest protects
+    renderList: function(type) {
+        // renders a list of all Nest thermostats or protects
 
+        var displayMode = this.config.displayMode;
         var displayType = this.config.displayType;
 
-        var numberOfProtects = this.protects.length;
-        var protectsToShow = this.config.protectsToShow;
+        var isThermostat = (type === 'thermostat');
+        var itemsToShow = isThermostat ? this.config.thermostatsToShow : this.config.protectsToShow;
+        var numberOfItems = isThermostat ? this.thermostats.length : this.protects.length;
 
-        var table = document.createElement('table');
-        table.classList.add('nest-list', 'xsmall', 'table');
+        var hbWrapper = document.createElement('div');
 
-        var headerRow = document.createElement('tr');
+        // create handlebars data object
+        var hbData = {
+            type,
+            showId: displayType === 'list-id',
+            c2Title: isThermostat ? 'Current' : 'Battery',
+            c3Title: isThermostat ? 'Target' : 'CO2',
+            c4Title: isThermostat ? 'Humidity' : 'Smoke',
+            tableClass: (isThermostat && (displayMode === 'all') && (this.protects.length > 0)) ? 'with-protects' : '',
+            rows: []
+        };
 
-        var nameLabel = document.createElement('th');
-        var batteryLabel = document.createElement('th');
-        var coLabel = document.createElement('th');
-        var smokeLabel = document.createElement('th');
-
-        // set up header labels
-        nameLabel.className = 'name';
-        nameLabel.innerHTML = 'Protect Name';
-        batteryLabel.innerHTML = 'Battery';
-        coLabel.innerHTML = 'CO2';
-        smokeLabel.innerHTML = 'Smoke';
-
-        if (displayType === 'list-id') {
-            // add list ID to table
-            var idLabel = document.createElement('th');
-            idLabel.className = 'nest-id';
-            idLabel.innerHTML = 'ID';
-            headerRow.appendChild(idLabel);
-        }
-
-        // append header labels
-        headerRow.appendChild(nameLabel);
-        headerRow.appendChild(batteryLabel);
-        headerRow.appendChild(coLabel);
-        headerRow.appendChild(smokeLabel);
-
-        // append header to table
-        table.appendChild(headerRow);
-
-        // render rows
-        if (this.isString(protectsToShow)) {
+        // add rows
+        if (this.isString(itemsToShow)) {
             // we only allow options of 'first' and 'all'
 
-            if (protectsToShow === 'first') {
-                table.appendChild(this.renderProtectRow(0));
+            if (itemsToShow === 'first') {
+                hbData.rows.push(this.formatListRow(0,type));
             } else {
-                for (i = 0; i < numberOfProtects; i++) {
-                    table.appendChild(this.renderProtectRow(i));
+                for (i = 0; i < numberOfItems; i++) {
+                    hbData.rows.push(this.formatListRow(i,type));
                 }
             }
 
-        } else if (this.isArray(protectsToShow)) {
-            // show selected protects
+        } else if (this.isArray(itemsToShow)) {
+            // show selected thermostats
 
-            for (i = 0; i < protectsToShow.length; i++) {
-                var val = protectsToShow[i];
-                if ((this.isNumber(val)) && (val < numberOfProtects)) {
-                    table.appendChild(this.renderProtectRow(val));
+            for (i = 0; i < itemsToShow.length; i++) {
+                var val = itemsToShow[i];
+                if ((this.isNumber(val)) && (val < numberOfItems)) {
+                    hbData.rows.push(this.formatListRow(val,type));
                 }
             }
 
         }
 
-        return table;
+        // generate html from template
+        var hbTemplate = Handlebars.templates['list_table.hbs'];
+        var hbHtml     = hbTemplate(hbData);
+        hbWrapper.innerHTML = hbHtml;
+
+        return hbWrapper.firstChild;
 
     },
 
-    renderProtectRow: function(pId) {
-        // renders a row with a single Nest protect
+    formatListRow: function(id,type) {
+        // generates a single thermostat or protect object
+        // only used in the list view
 
-        var displayType = this.config.displayType;
+        var isThermostat = (type === 'thermostat');
+        var item = isThermostat ? this.thermostats[id] : this.protects[id];
+        var name = item.name;
 
-        var protect = this.protects[pId];
-        var row = document.createElement('tr');
+        var c2Text = '';
+        var c2Class = false;
+        var c3Text = '';
+        var c3Class = false;
+        var c4Text = '';
+        var c4Class = false;
 
-        if (displayType === 'list-id') {
-            // add id
-            var idCell = document.createElement('td');
-            idCell.className = 'nest-id';
-            idCell.innerHTML = pId;
-            row.appendChild(idCell);
+        if (isThermostat) {
+
+            c2Text = item.isEcoMode ? 'ECO' : item.ambientTemp + '&deg;';
+            c3Text = item.targetTemp + '&deg;';
+            c4Text = item.humidity + '%';
+
+            if (item.isHeating) {
+                c3Class = 'heating';
+            } else if (item.isCooling) {
+                c3Class = 'cooling';
+            }
+
+            if (item.isHeatCoolMode) {
+                c3Text = item.targetTempLow + '&deg &bull; ' + item.targetTempHigh + '&deg;';
+            } else if (item.isEcoMode) {
+                c3Text = item.ecoTempLow + '&deg &bull; ' + item.ecoTempHigh + '&deg;';
+            }
+
+        } else {
+
+            c2Text = item.isOnline ? item.batteryHealth.toUpperCase() : 'OFFLINE';
+            c2Class = ((item.batteryHealth === 'replace') || (!item.isOnline)) ? 'warning' : false;
+            c3Text = item.coState.toUpperCase();
+            c3Class = item.coState;
+            c4Text = item.smokeState.toUpperCase();
+            c4Class = item.smokeState;
+
         }
 
-        // add name
-        var nameCell = document.createElement('td');
-        nameCell.className = 'name';
-        nameCell.innerHTML = protect.name;
-        row.appendChild(nameCell);
-
-        // add battery status
-        var batteryCell = document.createElement('td');
-        batteryCell.innerHTML = protect.batteryHealth.toUpperCase();
-
-        if (protect.batteryHealth === 'replace') {
-            batteryCell.className = 'warning';
-        } else if (!protect.isOnline) {
-            batteryCell.className = 'warning';
-            batteryCell.innerHTML = 'OFFLINE';
-        }
-        row.appendChild(batteryCell);
-
-        // add Co2 status
-        var coCell = document.createElement('td');
-        coCell.innerHTML = protect.coState.toUpperCase();
-        if (protect.coState === 'warning') {
-            coCell.className = 'warning';
-        } else if (protect.coState === 'emergency') {
-            coCell.className = 'emergency';
-        }
-        row.appendChild(coCell);
-
-        // add smoke status
-        var smokeCell = document.createElement('td');
-        smokeCell.innerHTML = protect.smokeState.toUpperCase();
-        if (protect.smokeState === 'warning') {
-            smokeCell.className = 'warning';
-        } else if (protect.smokeState === 'emergency') {
-            smokeCell.className = 'emergency';
-        }
-        row.appendChild(smokeCell);
+        var row = {
+            id,
+            name,
+            c2Text,
+            c2Class,
+            c3Text,
+            c3Class,
+            c4Text,
+            c4Class
+        };
 
         return row;
 
@@ -707,7 +505,12 @@ Module.register('mmm-nest-status', {
                     ambientTemp: (units === 'imperial') ? tObj.ambient_temperature_f : tObj.ambient_temperature_c,
                     targetTemp: (units === 'imperial') ? tObj.target_temperature_f : tObj.target_temperature_c,
                     ecoTempLow: (units === 'imperial') ? tObj.eco_temperature_low_f : tObj.eco_temperature_low_c,
-                    ecoTempHigh: (units === 'imperial') ? tObj.eco_temperature_high_f : tObj.eco_temperature_high_c
+                    ecoTempHigh: (units === 'imperial') ? tObj.eco_temperature_high_f : tObj.eco_temperature_high_c,
+                    isHeatCoolMode: tObj.hvac_mode === 'heat-cool',
+                    isEcoMode: tObj.hvac_mode === 'eco',
+                    isOff: tObj.hvac_state === 'off',
+                    isHeating: tObj.hvac_state === 'heating',
+                    isCooling: tObj.hvac_state === 'cooling'
                 }
 
                 this.thermostats.push(thermostat);

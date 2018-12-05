@@ -1,0 +1,22 @@
+<table class="nest-list xsmall table {{ tableClass }}">
+    <tr>
+        {{#if showId}}
+            <th class="nest-id">ID</th>
+        {{/if}}
+        <th class="name">{{ type }} Name</th>
+        <th>{{ c2Title }}</th>
+        <th>{{ c3Title }}</th>
+        <th>{{ c4Title }}</th>
+    </tr>
+    {{#each rows}}
+        <tr>
+            {{#if ../showId}}
+                <td class="nest-id">{{ id }}</td>
+            {{/if}}
+            <td class="name">{{{ name }}}</td>
+            <td{{#if c2Class}} class="{{ c2Class }}"{{/if}}>{{{ c2Text }}}</td>
+            <td{{#if c3Class}} class="{{ c3Class }}"{{/if}}>{{{ c3Text }}}</td>
+            <td{{#if c4Class}} class="{{ c4Class }}"{{/if}}>{{{ c4Text }}}</td>
+        </tr>
+    {{/each}}
+</table>

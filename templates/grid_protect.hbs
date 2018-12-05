@@ -1,0 +1,16 @@
+<div class="protect protect-{{ id }} {{ classColor }} {{ classMove }} {{ classSize }} {{ classDark }}">
+    {{#unless moveTitle}}
+        {{#if showNames}}
+            <header class="title">{{{ name }}}</header>
+        {{/if}}
+    {{/unless}}
+    <div class="circle">
+        <div class="ring"></div>
+        <span class="status">{{{ statusText }}}</span>
+    </div>
+    {{#if moveTitle}}
+        {{#if showNames}}
+            <header class="title">{{{ name }}}</header>
+        {{/if}}
+    {{/if}}
+</div>
