@@ -209,31 +209,31 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 15px;
+    margin: 0;
+    padding-bottom: 15px;
 }
 
-.mmm-nest-status .size-large .title,
-.mmm-nest-status .size-medium .title {
-    margin-bottom: 20px;
+.mmm-nest-status .size-large .title {
+    padding-bottom: 20px;
 }
 
 .mmm-nest-status .size-small .title {
     font-size: 12px;
-    margin-bottom: 10px;
+    padding-bottom: 10px;
 }
 
-.mmm-nest-status .title-bot .title {
-    margin-top: 15px;
-    margin-bottom: 0;
+.mmm-nest-status .protect.title-bot .title {
+    padding-top: 15px;
+    padding-bottom: 0;
 }
 
-.mmm-nest-status .size-large .title-bot .title,
-.mmm-nest-status .size-medium .title-bot .title {
-    margin-top: 20px;
+.mmm-nest-status .protect.size-large .title-bot .title,
+.mmm-nest-status .protect.size-medium .title-bot .title {
+    padding-top: 20px;
 }
 
-.mmm-nest-status .size-small .title-bot .title {
-    margin-top: 10px;
+.mmm-nest-status .protect.size-small .title-bot .title {
+    padding-top: 10px;
     white-space: normal;
     overflow: visible;
 }
@@ -249,8 +249,7 @@
     position: relative;
 }
 
-.mmm-nest-status .thermostat.size-large + .thermostat.size-large,
-.mmm-nest-status .protect.size-large + .protect.size-large {
+.mmm-nest-status .size-large + .size-large {
     margin-left: 25px;
 }
 
@@ -484,6 +483,18 @@
     line-height: 1;
     font-weight: 700;
     text-align: center;
+}
+
+.mmm-nest-status .thermostat.size-large .humidity {
+    padding-top: 5px;
+}
+
+.mmm-nest-status .thermostat.size-small .humidity {
+    padding-top: 10px;
+}
+
+.mmm-nest-status .thermostat.classic .humidity,
+.mmm-nest-status .thermostat.classic.size-large .humidity {
     padding-top: 10px;
 }
 
@@ -531,10 +542,14 @@
 
 .mmm-nest-status .thermostat.size-large .icn {
     background-size: 30px 30px;
-    bottom: 95px;
+    bottom: 100px;
     left: 105px;
     width: 30px;
     height: 30px;
+}
+
+.mmm-nest-status .thermostat.size-large.classic .icn {
+    bottom: 95px;
 }
 
 .mmm-nest-status .thermostat.size-medium .icn {
@@ -544,7 +559,7 @@
 
 .mmm-nest-status .thermostat.size-small .icn {
     bottom: 52px;
-    left: 32px;
+    left: 33px;
 }
 
 .mmm-nest-status .thermostat .icn.fan {
@@ -566,11 +581,6 @@
 /*
     GRID VIEW: THERMOSTAT CLASSIC DIAL
 */
-
-.mmm-nest-status .thermostat.classic.size-large .title,
-.mmm-nest-status .thermostat.classic.size-medium .title {
-    margin-bottom: 15px;
-}
 
 .mmm-nest-status .thermostat.classic .temp {
     top: 0;

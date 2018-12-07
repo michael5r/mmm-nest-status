@@ -86,11 +86,11 @@ With `showNames` set to `false`.
 
 #### Medium Size
 
-![image](https://user-images.githubusercontent.com/3209660/49625707-2ec9ed80-f99c-11e8-8486-abc56c2c8a55.png)
+![image](https://user-images.githubusercontent.com/3209660/49628282-dfd68500-f9a8-11e8-804f-8761070285d9.png)
 
 #### Small Size
 
-![image](https://user-images.githubusercontent.com/3209660/49625762-751f4c80-f99c-11e8-83ab-16725d05fa5e.png)
+![image](https://user-images.githubusercontent.com/3209660/49628314-18765e80-f9a9-11e8-9f59-afe82964d7e7.png)
 
 ### Grid view: Thermostat (Non-Classic Mode)
 
@@ -100,47 +100,46 @@ The non-classic view is a bit more abstract and doesn't include quite as detaile
 
 With `showNames` set to `false`.
 
-![image](https://user-images.githubusercontent.com/3209660/49625626-df83bd00-f99b-11e8-996a-d2d2699b34ea.png)
+![image](https://user-images.githubusercontent.com/3209660/49628758-b8cd8280-f9ab-11e8-96a5-1278311ad5d8.png)
 
 #### Medium Size
 
-![image](https://user-images.githubusercontent.com/3209660/49622303-a1cc6780-f98e-11e8-8a64-18b4fd8772dc.png)
+![image](https://user-images.githubusercontent.com/3209660/49628974-c1728880-f9ac-11e8-9727-d37ab032f713.png)
 
 #### Small Size
 
-![image](https://user-images.githubusercontent.com/3209660/49624641-d7298300-f997-11e8-8a29-c89effa56c77.png)
+![image](https://user-images.githubusercontent.com/3209660/49628480-e9142180-f9a9-11e8-83d5-9d7a1cb6585e.png)
 
 ### Grid view: Protect
 
-![image](https://user-images.githubusercontent.com/3209660/49419889-82df9280-f74e-11e8-98e4-1aad5c080076.png)
+I'm not showing screenshots of the large size, but just imagine they're the same as the `medium` size below just ... well ... larger.
 
-By default the protects are the same dimensions as the thermostats - which means they line up nicely next to each other.
+#### Medium Size
 
-![image](https://user-images.githubusercontent.com/3209660/49419962-d0f49600-f74e-11e8-8292-557a1249fc21.png)
+![image](https://user-images.githubusercontent.com/3209660/49628193-5aeb6b80-f9a8-11e8-8974-fae75973e25d.png)
+
+Thermostats and protects with the same size parameter line up nicely next to each other if `groupTogether` is set to `true`.
+
+![image](https://user-images.githubusercontent.com/3209660/49628019-83bf3100-f9a7-11e8-8bce-9d34dcb1e8fe.png)
+
+#### Small Size
+
+![image](https://user-images.githubusercontent.com/3209660/49626681-a863da80-f9a0-11e8-9795-27518bcb83b2.png)
+
 
 ### Grid view: Protect (Dark Mode)
 
-![image](https://user-images.githubusercontent.com/3209660/49420474-3e092b00-f751-11e8-9317-76aea978fafc.png)
+#### Medium Size
 
-Lined up with thermostats:
+![image](https://user-images.githubusercontent.com/3209660/49628212-82dacf00-f9a8-11e8-80e9-8fb472ef6ae0.png)
 
-![image](https://user-images.githubusercontent.com/3209660/49420527-7f99d600-f751-11e8-942b-97cf7dfa6d7f.png)
+Lined up with thermostats that have `thermostatClassic` set to `false`:
 
-### Grid view: Protect (Small Mode)
+![image](https://user-images.githubusercontent.com/3209660/49628674-30e77880-f9ab-11e8-802a-c7f0460982ac.png)
 
-The states are the same as the default (medium) size of the protect - these are just smaller, so you can display more devices without filling up your entire mirror.
+#### Small Size
 
-**Regular mode:**
-
-![image](https://user-images.githubusercontent.com/3209660/49420740-89700900-f752-11e8-9b11-ebd11dbd41db.png)
-
-**Dark mode:**
-
-![image](https://user-images.githubusercontent.com/3209660/49420747-9260da80-f752-11e8-9b32-b8ffc7c32320.png)
-
-**Dark mode with both `showNames` and `protectShowOk` set to false:**
-
-![image](https://user-images.githubusercontent.com/3209660/49420859-131fd680-f753-11e8-8299-ac256d237c22.png)
+![image](https://user-images.githubusercontent.com/3209660/49626750-d6e1b580-f9a0-11e8-9927-40f260883ef5.png)
 
 ### List view: Thermostat & Protect
 
@@ -159,6 +158,13 @@ If the `displayType` is set to `list-id`, you get the list view but with IDs in 
 ![image](https://user-images.githubusercontent.com/3209660/49421591-30a26f80-f756-11e8-8390-14cd520fca7c.png)
 
 You can use these IDs to specify which devices to show in `thermostatsToShow` and `protectsToShow`.
+
+### Minimal View
+
+For a very minimal & clean look, set `thermostatClassic` to `false`, `showNames` to `false` and `protectDark` to `true`.
+
+![image](https://user-images.githubusercontent.com/3209660/49628601-b61e5d80-f9aa-11e8-8c26-1d810918f8a0.png)
+
 
 ## FAQ
 
