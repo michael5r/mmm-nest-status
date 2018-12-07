@@ -18,23 +18,25 @@ Module.register('mmm-nest-status', {
         showNames: true,
         thermostatsToShow: 'all',
         protectsToShow: 'all',
-        alignment: 'left',
-        groupTogether: true,
-        thermostatSize: 'regular',
-        protectSize: 'regular',
-        protectDarkMode: false,
+        alignment: 'center',
+        groupTogether: false,
+        thermostatSize: 'large',
+        thermostatClassic: true,
+        protectSize: 'small',
+        protectDark: false,
         protectShowOk: true,
         units: config.units,
         updateInterval: 60 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '1.0.1'
+        version: '1.1.0'
     },
 
     getScripts: function() {
         return [
             'handlebars.runtime.min-v4.0.12.js',
-            'mmm-nest-status-templates.js'
+            'mmm-nest-status-templates.js',
+            this.file('mmm-nest-dial.js')
         ];
     },
 
@@ -48,10 +50,9 @@ Module.register('mmm-nest-status', {
 
         Log.info('Starting module: ' + this.name + ', version ' + this.config.version);
 
-        // TODO: change, so this only happens if small protects are used with large thermostats
-        // if the small protect size option is chosen, groupTogether becomes false
-        // so the smaller version of the Protects are shown in their own container
-        if (this.config.protectSize === 'small') {
+        // make sure thermostats and protects of different sizes
+        // aren't in the same box
+        if ((this.config.displayMode === 'all') && (this.config.protectSize !== this.config.thermostatSize)) {
             this.config.groupTogether = false;
         }
 
@@ -79,17 +80,18 @@ Module.register('mmm-nest-status', {
         var protectsToShow = this.config.protectsToShow;
 
         var outer_wrapper = document.createElement('div');
+        var nestHome = '<svg viewBox="0 0 19.5 18.2" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><path transform="translate(-6.2 -6.7)" d="M18.1,24.9H13.8V19.4a2.1,2.1,0,0,1,4.2,0v5.5Zm6-8.1-1.8-1.5v9.5H19.9V19.3a3.9,3.9,0,1,0-7.8,0v5.5H9.6V15.3L7.8,16.8l-1.6-2L16,6.7l4.3,3.6V9.1h2V12l3.4,2.8Z" fill="#999999"/></svg><br>';
 
         // show error message
         if (this.errMsg !== '') {
-            outer_wrapper.innerHTML = this.errMsg;
+            outer_wrapper.innerHTML = nestHome + this.errMsg;
             outer_wrapper.className = 'normal regular small';
             return outer_wrapper;
         }
 
         // show loading message
         if (!this.loaded) {
-            outer_wrapper.innerHTML = 'Loading ...';
+            outer_wrapper.innerHTML = nestHome + '... loading ...';
             outer_wrapper.className = 'bright light small';
             return outer_wrapper;
         }
@@ -113,7 +115,7 @@ Module.register('mmm-nest-status', {
             // grid mode view
 
             if ((alignment === 'center') || (alignment ==='left') || (alignment ==='right')) {
-                outer_wrapper.className = 'nest-wrapper ' + alignment;
+                outer_wrapper.className = this.classNames('nest-wrapper',alignment);
             } else {
                 outer_wrapper.className = 'nest-wrapper center';
             }
@@ -205,45 +207,101 @@ Module.register('mmm-nest-status', {
 
         var t = this.thermostats[id];
         var showNames = this.config.showNames;
+        var units = this.config.units;
 
         var thermostatSize = this.config.thermostatSize;
+        var isClassic = this.config.thermostatClassic;
 
-        var hbWrapper = document.createElement('div');
         var statusClass = '';
         var targetTemp = t.targetTemp;
 
-        if (t.isOff) {
-            if ((!t.isHeatCoolMode) && (!t.isEcoMode)) {
-                if (parseInt(t.ambientTemp) < parseInt(t.targetTemp)) {
-                    statusClass = 'heat';
-                } else if (parseInt(t.ambientTemp) > parseInt(t.targetTemp)) {
-                    statusClass = 'cool';
-                } else {
-                    statusClass = 'hidden';
-                }
-            }
+        var dialSvgNode;
+        var dialSvg = '';
+
+        if ((t.isEcoMode) || (t.isOffMode)) {
+            // default is fine
+        } else if (parseInt(t.ambientTemp) < parseInt(t.targetTemp)) {
+            statusClass = 'status-left';
+        } else if (parseInt(t.ambientTemp) > parseInt(t.targetTemp)) {
+            statusClass = 'status-right';
+        } else {
+            statusClass = 'hidden';
         }
 
         if (t.isHeatCoolMode) {
-            targetTemp = t.targetTempLow + '<small>&bull;</small>' + t.targetTempHigh;
+            targetTemp = t.targetTempLow + '<small class="dot">&bull;</small>' + t.targetTempHigh;
         } else if (t.isEcoMode) {
             targetTemp = 'ECO';
+        } else if (t.isOffMode) {
+            targetTemp = 'OFF';
         }
+
+        // add 'heat set to' / 'cool set to' label (not for small sizes, eco mode and the non-classic version of thermostat)
+        var showTempStatus = false;
+        var tempStatusText = '';
+        if ((thermostatSize !== 'small') && (isClassic) && (!t.isEcoMode)) {
+            if (t.isHeating || t.isCooling) {
+                showTempStatus = true;
+                tempStatusText = (t.isHeating) ? 'HEATING' : 'COOLING';
+            } else if ((t.hvacMode === 'heat') || (t.hvacMode === 'cool')) {
+                showTempStatus = true;
+                tempStatusText = (t.hvacMode === 'heat') ? 'HEAT SET TO' : 'COOL SET TO';
+            }
+        }
+
+        if (isClassic) {
+
+            dialSvgNode = document.createElement('div');
+            new mmmNestDial(dialSvgNode, {
+                size: thermostatSize,
+                temperatureScale: (units === 'imperial') ? 'F' : 'C',
+                hasLeaf: !t.fanOn && t.leafOn,
+                targetTemp: t.targetTemp,
+                targetTempLow: t.targetTempLow,
+                targetTempHigh: t.targetTempHigh,
+                ambientTemp: t.ambientTemp,
+                ecoTempLow: t.ecoTempLow,
+                ecoTempHigh: t.ecoTempHigh,
+                isAwayMode: this.awayState === 'away',
+                isEcoMode: t.isEcoMode,
+                isOffMode: t.isOffMode,
+                isHeatCoolMode: t.isHeatCoolMode
+            });
+
+            dialSvg = dialSvgNode.innerHTML;
+
+        }
+
+        var classes = this.classNames(
+            'thermostat',
+            t.hvacState !== 'off' ? t.hvacState : false,
+            'size-' + thermostatSize,
+            t.hvacMode,
+            isClassic ? 'classic' : false
+        );
+
+        var statusClasses = this.classNames(
+            'status',
+            statusClass
+        );
+
+        var hbWrapper = document.createElement('div');
 
         // create handlebars data object
         var hbData = {
-            id,
+            classes,
             name: t.name.replace(/ *\([^)]*\) */g, ''),
-            classSize: (thermostatSize === 'small') ? 'sml' : 'reg',
-            classState: t.hvacState,
-            classMode: (t.hvacMode !== 'off') ? t.hvacMode : '',
             showNames,
             ambientTemp: t.ambientTemp,
             targetTemp,
-            statusClass,
+            statusClasses,
             humidity: t.humidity + '%',
             fanOn: t.fanOn,
-            leafOn: t.leafOn
+            leafOn: isClassic ? false : t.leafOn,
+            isClassic,
+            dialSvg,
+            showTempStatus,
+            tempStatusText
         };
 
         // generate html from template
@@ -262,13 +320,11 @@ Module.register('mmm-nest-status', {
         var showNames = this.config.showNames;
         var protectSize = this.config.protectSize;
         var protectShowOk = this.config.protectShowOk;
-        var protectDarkMode = this.config.protectDarkMode;
         var protectSmallMode = protectSize === 'small';
 
         // if we're splitting thermostats and protects into
         // 2 different containers, the Protect title should move to the bottom
         var moveTitle = this.config.displayMode === 'all' && !this.config.groupTogether;
-        var moveClass = moveTitle ? ' title-bot' : '';
 
         // generate status text
         var statusText = (protectShowOk && p.uiColor !== 'gray') ? 'OK' : '';
@@ -293,16 +349,20 @@ Module.register('mmm-nest-status', {
             }
         }
 
+        var classes = this.classNames(
+            'protect',
+            p.uiColor,
+            moveTitle ? 'title-bot' : '',
+            'size-' + protectSize,
+            this.config.protectDark ? 'dark' : ''
+        );
+
         var hbWrapper = document.createElement('div');
 
         // create handlebars data object
         var hbData = {
-            id,
+            classes,
             name: p.name.replace(/ *\([^)]*\) */g, ''),
-            classColor: p.uiColor,
-            classMove: moveTitle ? ' title-bot' : '',
-            classDark: protectDarkMode ? ' dark' : '',
-            classSize: (protectSize === 'small') ? 'sml' : 'reg',
             showNames,
             moveTitle,
             statusText
@@ -469,9 +529,10 @@ Module.register('mmm-nest-status', {
 
     processNestData: function(data) {
 
-        this.thermostats = [];
-        this.protects = [];
-        this.awayState = 'unknown'; // 'home', 'away'
+        var renderUi = true;
+        var thermostats = [];
+        var protects = [];
+        var awayState = 'unknown'; // 'home', 'away'
 
         var numberOfThermostats = (data.devices && data.devices.thermostats) ? Object.keys(data.devices.thermostats).length : 0;
         var numberOfProtects = (data.devices && data.devices.smoke_co_alarms) ? Object.keys(data.devices.smoke_co_alarms).length : 0;
@@ -480,7 +541,7 @@ Module.register('mmm-nest-status', {
         if (data.devices && data.structures) {
             var sId = Object.keys(data.structures)[0];
             var sObj = data.structures[sId];
-            this.awayState = sObj.away;
+            awayState = sObj.away;
         }
 
         var displayMode = this.config.displayMode;
@@ -498,8 +559,8 @@ Module.register('mmm-nest-status', {
                     humidity: tObj.humidity,
                     fanOn: tObj.fan_timer_active, // displayed when either the fan or the humidifier is on
                     leafOn: tObj.has_leaf,        // displayed when the thermostat is set to an energy-saving temperature
-                    hvacMode: tObj.hvac_mode,     // "heat", "cool", "heat-cool", "eco", "off"
-                    hvacState: tObj.hvac_state,   // "heating", "cooling", "off"
+                    hvacMode: tObj.hvac_mode,     // "heat", "cool", "heat-cool", "eco", "off" ("off" means thermostat is turned off)
+                    hvacState: tObj.hvac_state,   // "heating", "cooling", "off" ("off" means thermostat is dormant)
                     targetTempLow: (units === 'imperial') ? tObj.target_temperature_low_f : tObj.target_temperature_low_c,
                     targetTempHigh: (units === 'imperial') ? tObj.target_temperature_high_f : tObj.target_temperature_high_c,
                     ambientTemp: (units === 'imperial') ? tObj.ambient_temperature_f : tObj.ambient_temperature_c,
@@ -508,12 +569,12 @@ Module.register('mmm-nest-status', {
                     ecoTempHigh: (units === 'imperial') ? tObj.eco_temperature_high_f : tObj.eco_temperature_high_c,
                     isHeatCoolMode: tObj.hvac_mode === 'heat-cool',
                     isEcoMode: tObj.hvac_mode === 'eco',
-                    isOff: tObj.hvac_state === 'off',
+                    isOffMode: tObj.hvac_mode === 'off',
                     isHeating: tObj.hvac_state === 'heating',
                     isCooling: tObj.hvac_state === 'cooling'
                 }
 
-                this.thermostats.push(thermostat);
+                thermostats.push(thermostat);
 
             }
 
@@ -535,20 +596,41 @@ Module.register('mmm-nest-status', {
                     isOnline: pObj.is_online                // true, false
                 }
 
-                this.protects.push(protect);
+                protects.push(protect);
 
             }
         }
 
-        this.loaded = true;
+        // check old data to make sure we're not re-rendering the UI for no reason
+        if ((this.loaded) && ((this.thermostats.length > 0) || (this.protects.length > 0))) {
 
-        if ((numberOfProtects === 0) && (numberOfThermostats === 0)) {
-            this.errMsg = 'There are no Nest Thermostats or Protects in this account.';
-        } else {
-            this.errMsg = '';
+            var oldThermostats = this.thermostats;
+            var oldProtects = this.protects;
+            var oldAwayState = this.awayState;
+
+            if ((this.jsonEqual(oldThermostats,thermostats)) && (this.jsonEqual(oldProtects,protects)) && (this.jsonEqual(oldAwayState,awayState))) {
+                // everything's the same
+                renderUi = false;
+            }
+
         }
 
-        this.updateDom(this.config.animationSpeed);
+        this.loaded = true;
+        this.thermostats = thermostats;
+        this.protects = protects;
+        this.awayState = awayState;
+
+        if (renderUi) {
+
+            if ((numberOfProtects === 0) && (numberOfThermostats === 0)) {
+                this.errMsg = 'There are no Nest Thermostats or Protects in this account.';
+            } else {
+                this.errMsg = '';
+            }
+
+            this.updateDom(this.config.animationSpeed);
+
+        }
 
     },
 
@@ -562,6 +644,39 @@ Module.register('mmm-nest-status', {
 
     isNumber: function(val) {
         return typeof val === 'number' && isFinite(val);
+    },
+
+    // https://github.com/JedWatson/classnames/
+    classNames: function() {
+        var classes = [];
+
+        for (var i = 0; i < arguments.length; i++) {
+            var arg = arguments[i];
+            if (!arg) continue;
+
+            var argType = typeof arg;
+
+            if (argType === 'string' || argType === 'number') {
+                classes.push(arg);
+            } else if (Array.isArray(arg) && arg.length) {
+                var inner = classNames.apply(null, arg);
+                if (inner) {
+                    classes.push(inner);
+                }
+            } else if (argType === 'object') {
+                for (var key in arg) {
+                    if (hasOwn.call(arg, key) && arg[key]) {
+                        classes.push(key);
+                    }
+                }
+            }
+        }
+
+        return classes.join(' ');
+    },
+
+    jsonEqual: function(a,b) {
+        return JSON.stringify(a) === JSON.stringify(b);
     },
 
     scheduleUpdate: function(delay) {

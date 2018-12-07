@@ -4,16 +4,17 @@ The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/Magi
 
 This module displays both your [Nest](https://www.nest.com) thermostats and protect smoke detectors on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
-![image](https://user-images.githubusercontent.com/3209660/49417517-acdf8780-f743-11e8-8ae9-07da9f24b39e.png)
-*An example showing multiple thermostats and multiple smoke detectors (using the small & dark Protect design):*
+![image](https://user-images.githubusercontent.com/3209660/49621016-097fb400-f989-11e8-9fb2-bb824ac41203.png)
+*An example showing multiple thermostats and multiple smoke detectors (using the large size & classic mode for the thermostats, and the small size & dark mode for the protects):*
 
 ## Key Features
-- all design states for the Nest thermostat, including Eco mode and leaf/fan icons
-- all design states for the Nest protect plus `dark` and `small` variations to better fit into your mirror theme
-- choose between `grid` and `list` mode to display your devices
-- choose to display all your thermostats/protects, or pick & choose which devices to show
+- all states for the Nest thermostat (including Eco mode, Away mode, leaf/fan icons, etc) in 2 different designs and 3 sizes
+- all states for the Nest protect in 2 different designs and 3 sizes
+- 2 different modes - `grid` and `list` - allows you to easily customize your display
+- choose to display all of your thermostats/protects, or pick & choose which devices to show
 - choose to display the name of the thermostat/protect for easy identification
 - group the thermostats and protects together, or split them up into stackable containers
+- only re-renders the devices when data has actually changed
 
 ## Installing the module
 Run `git clone https://github.com/michael5r/mmm-nest-status.git` from inside your `MagicMirror/modules` folder.
@@ -44,71 +45,101 @@ If, however, you wish to modify the HTML structure of the thermostats or smoke d
 
 ## General Configuration Options
 
-| Key | What it Does | Values | Default | Notes |
-|---|---|---|---|---|
-| `token` | Your Nest API token. | -- | -- | **This value is required for this module to work.** |
-| `displayType` | Choose between a grid view or a list view. | `grid`, `list`, `list-id` | `grid` | `list-id` is the same as `list`, but shows device IDs in the list as well. |
-| `displayMode` | Which devices to display. | `thermostat`, `protect`, `all` | `all` | -- |
-| `thermostatsToShow` | Which thermostats to display. | `all`, `first`, `[]` | `all` | Accepts an `array` of device IDs - you can get the IDs from setting the `displayType` to `list-id`. |
-| `protectsToShow` | Which protects to display. | `all`, `first`, `[]` | `all` | Accepts an `array` of device IDs - you can get the IDs from setting the `displayType` to `list-id`. |
-| `units` | Which temperature units to use. | `imperial` (fahrenheit), `metric` (celsius) | Specified by MM's `config.js` | If, for some reason, you wish to override your `config.js` settings for `units`, this is where you do it. |
-| `updateInterval` | How often to update the Nest data. | value in `ms` | `60000ms` (aka 1 minute) | Nest recommends updating no more than once pr. minute. |
+Option               | Type             | Default   | Description
+---------------------|------------------|-----------|-------------------------------------------------------
+`token`              | `int`            | --------- | **This value is required for this module to work.**
+`displayType`        | `string`         | `grid`    | One of: `grid`, `list`, [`list-id`](#list-view-with-id-thermostat--protect)
+`displayMode`        | `string`         | `all`     | One of: `thermostat`, `protect`, `all`
+`thermostatsToShow`  | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
+`protectsToShow`     | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
+`units`              | `string`         | config.js | One of: `imperial` (fahrenheit), `metric` (celsius)
+`updateInterval`     | `int`            | '60000'   | Nest recommends updating no more than once pr. minute.
+
+**Note:** `units` get their default value from the MagicMirror `config.js` file. I'd strongly suggest adding the value in there instead of adding it in this module.
+
 
 ## Configuration Options specific to the Grid view
 
-**The following options only apply if your `displayType` has been set to `grid` - they have no effect on the list view:**
+The following options only apply if your `displayType` has been set to `grid` - they have no effect on the list view:
 
-| Key | What it Does | Values | Default | Notes |
-|---|---|---|---|---|
-| `showNames` | Whether to show the device name or not. | `true`, `false` | `true` | Displays the device name above the device. |
-| `alignment` | How the elements should be aligned on screen. | `left`, `center`, `right` | `left` | If you have a lot of devices, the `center` mode looks nicer. |
-| `groupTogether` | Whether all devices should be in a single box. | `true`, `false` | `true` | If this is set to `false`, thermostats will be in one box and protects will be in another box underneath. |
-| `thermostatSize` | Size of the Nest thermostat. | `small`, `regular` | `regular` | Feel free to mix & match with the protect size below. |
-| `protectSize` | Size of the Protect smoke detector. | `small`, `regular` | `regular` | If you have a lot of protects, use the `small` size. |
-| `protectDarkMode` | Switches protects to use the dark design. | `true`, `false` | `false` | Dark mode for the protects. Works great with the `small` mode above. |
-| `protectShowOk` | Toggles the `ok` text in a green protect. | `true`, `false` | `true` | If everything is ok with the protect, this shows the text `ok`. |
+Option               | Type             | Default   | Description
+---------------------|------------------|-----------|-------------------------------------------------------
+`showNames`          | `boolean`        | `true`    | Displays the device name above the device
+`alignment`          | `string`         | `center`  | One of: `left`, `center`, `right`
+`groupTogether`      | `boolean`        | `false`   | Whether thermostats and protects share the same box
+`thermostatSize`     | `string`         | `large`   | One of: `small`, `medium`, `large`
+`thermostatClassic`  | `boolean`        | `true`    | [Classic view](#grid-view-thermostat-classic-mode) of the thermostat
+`protectSize`        | `string`         | 'small'   | One of: `small`, `medium`, `large`
+`protectDark`        | `boolean`        | 'false'   | Switches protects to use the [dark design](#grid-view-protect-dark-mode)
+`protectShowOk`      | `boolean`        | 'true'    | Shows the text `ok` in a protect when everything is ok.
+
 
 ## How It Looks
 
-### Grid view: Thermostat
+### Grid view: Thermostat (Classic Mode)
 
-![image](https://user-images.githubusercontent.com/3209660/49419333-f7fd9880-f74b-11e8-9e16-23aa80f6aa2d.png)
+#### Large Size
 
-### Grid view: Multiple Thermostats
+With `showNames` set to `false`.
 
-![image](https://user-images.githubusercontent.com/3209660/49419463-870ab080-f74c-11e8-8498-56a9f4f32e26.png)
+![image](https://user-images.githubusercontent.com/3209660/49625264-7b142e00-f99a-11e8-815e-05f6e92d9808.png)
+
+#### Medium Size
+
+![image](https://user-images.githubusercontent.com/3209660/49628282-dfd68500-f9a8-11e8-804f-8761070285d9.png)
+
+#### Small Size
+
+![image](https://user-images.githubusercontent.com/3209660/49628314-18765e80-f9a9-11e8-9f59-afe82964d7e7.png)
+
+### Grid view: Thermostat (Non-Classic Mode)
+
+The non-classic view is a bit more abstract and doesn't include quite as detailed information as the `classic` mode.
+
+#### Large Size
+
+With `showNames` set to `false`.
+
+![image](https://user-images.githubusercontent.com/3209660/49628758-b8cd8280-f9ab-11e8-96a5-1278311ad5d8.png)
+
+#### Medium Size
+
+![image](https://user-images.githubusercontent.com/3209660/49628974-c1728880-f9ac-11e8-9727-d37ab032f713.png)
+
+#### Small Size
+
+![image](https://user-images.githubusercontent.com/3209660/49628480-e9142180-f9a9-11e8-83d5-9d7a1cb6585e.png)
 
 ### Grid view: Protect
 
-![image](https://user-images.githubusercontent.com/3209660/49419889-82df9280-f74e-11e8-98e4-1aad5c080076.png)
+I'm not showing screenshots of the large size, but just imagine they're the same as the `medium` size below just ... well ... larger.
 
-By default the protects are the same dimensions as the thermostats - which means they line up nicely next to each other.
+#### Medium Size
 
-![image](https://user-images.githubusercontent.com/3209660/49419962-d0f49600-f74e-11e8-8292-557a1249fc21.png)
+![image](https://user-images.githubusercontent.com/3209660/49628193-5aeb6b80-f9a8-11e8-8974-fae75973e25d.png)
+
+Thermostats and protects with the same size parameter line up nicely next to each other if `groupTogether` is set to `true`.
+
+![image](https://user-images.githubusercontent.com/3209660/49628019-83bf3100-f9a7-11e8-8bce-9d34dcb1e8fe.png)
+
+#### Small Size
+
+![image](https://user-images.githubusercontent.com/3209660/49626681-a863da80-f9a0-11e8-9795-27518bcb83b2.png)
+
 
 ### Grid view: Protect (Dark Mode)
 
-![image](https://user-images.githubusercontent.com/3209660/49420474-3e092b00-f751-11e8-9317-76aea978fafc.png)
+#### Medium Size
 
-Lined up with thermostats:
+![image](https://user-images.githubusercontent.com/3209660/49628212-82dacf00-f9a8-11e8-80e9-8fb472ef6ae0.png)
 
-![image](https://user-images.githubusercontent.com/3209660/49420527-7f99d600-f751-11e8-942b-97cf7dfa6d7f.png)
+Lined up with thermostats that have `thermostatClassic` set to `false`:
 
-### Grid view: Protect (Small Mode)
+![image](https://user-images.githubusercontent.com/3209660/49628674-30e77880-f9ab-11e8-802a-c7f0460982ac.png)
 
-The states are the same as the default (regular) size of the protect - these are just smaller, so you can display more devices without filling up your entire mirror. Please note that if you're using the small version of the protects, the protects automatically sit in a box by themselves beneath any thermostats you might have.
+#### Small Size
 
-**Regular mode:**
-
-![image](https://user-images.githubusercontent.com/3209660/49420740-89700900-f752-11e8-9b11-ebd11dbd41db.png)
-
-**Dark mode:**
-
-![image](https://user-images.githubusercontent.com/3209660/49420747-9260da80-f752-11e8-9b32-b8ffc7c32320.png)
-
-**Dark mode with both `showNames` and `protectShowOk` set to false:**
-
-![image](https://user-images.githubusercontent.com/3209660/49420859-131fd680-f753-11e8-8299-ac256d237c22.png)
+![image](https://user-images.githubusercontent.com/3209660/49626750-d6e1b580-f9a0-11e8-9927-40f260883ef5.png)
 
 ### List view: Thermostat & Protect
 
@@ -126,7 +157,14 @@ If the `displayType` is set to `list-id`, you get the list view but with IDs in 
 
 ![image](https://user-images.githubusercontent.com/3209660/49421591-30a26f80-f756-11e8-8390-14cd520fca7c.png)
 
-This allows you to pick and choose which devices you want to display.
+You can use these IDs to specify which devices to show in `thermostatsToShow` and `protectsToShow`.
+
+### Minimal View
+
+For a very minimal & clean look, set `thermostatClassic` to `false`, `showNames` to `false` and `protectDark` to `true`.
+
+![image](https://user-images.githubusercontent.com/3209660/49628601-b61e5d80-f9aa-11e8-8c26-1d810918f8a0.png)
+
 
 ## FAQ
 
@@ -143,10 +181,6 @@ protectsToShow: [0,1,2,3,8],
 ```
 
 This results in only the 5 protects above being displayed.
-
-### When I set `protectSize` to `small`, my protects are now displayed underneath my thermostats instead of next to the thermostats. Why?
-
-It looks better this way - trust me.
 
 ### I have a humidifier hooked up to my thermostat and on the Nest app, I can see a humidifying icon when it is running. Do you show this too?
 
