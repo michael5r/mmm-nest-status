@@ -223,16 +223,18 @@
 }
 
 .mmm-nest-status .protect.title-bot .title {
-    padding-top: 15px;
     padding-bottom: 0;
 }
 
-.mmm-nest-status .protect.size-large .title-bot .title,
-.mmm-nest-status .protect.size-medium .title-bot .title {
+.mmm-nest-status .protect.size-large.title-bot .title {
     padding-top: 20px;
 }
 
-.mmm-nest-status .protect.size-small .title-bot .title {
+.mmm-nest-status .protect.size-medium.title-bot .title {
+    padding-top: 15px;
+}
+
+.mmm-nest-status .protect.size-small.title-bot .title {
     padding-top: 10px;
     white-space: normal;
     overflow: visible;
