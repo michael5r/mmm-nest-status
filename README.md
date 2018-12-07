@@ -78,19 +78,29 @@ Option               | Type             | Default   | Description
 
 ### Grid view: Thermostat (Classic Mode)
 
-No screenshots of the large size - it looks exactly like the medium size below, just ... well ... larger.
+#### Large Size
+
+With `showNames` set to `false`.
+
+![image](https://user-images.githubusercontent.com/3209660/49625264-7b142e00-f99a-11e8-815e-05f6e92d9808.png)
 
 #### Medium Size
 
-![image](https://user-images.githubusercontent.com/3209660/49622379-fbcd2d00-f98e-11e8-8ab0-13a957b89db4.png)
+![image](https://user-images.githubusercontent.com/3209660/49625707-2ec9ed80-f99c-11e8-8486-abc56c2c8a55.png)
 
 #### Small Size
 
-
+![image](https://user-images.githubusercontent.com/3209660/49625762-751f4c80-f99c-11e8-83ab-16725d05fa5e.png)
 
 ### Grid view: Thermostat (Non-Classic Mode)
 
-The non-classic view is a bit more abstract and doesn't include quite as detailed information as the `classic` mode. Again, only medium and small size screenshots below.
+The non-classic view is a bit more abstract and doesn't include quite as detailed information as the `classic` mode.
+
+#### Large Size
+
+With `showNames` set to `false`.
+
+![image](https://user-images.githubusercontent.com/3209660/49625626-df83bd00-f99b-11e8-996a-d2d2699b34ea.png)
 
 #### Medium Size
 
@@ -98,7 +108,7 @@ The non-classic view is a bit more abstract and doesn't include quite as detaile
 
 #### Small Size
 
-
+![image](https://user-images.githubusercontent.com/3209660/49624641-d7298300-f997-11e8-8a29-c89effa56c77.png)
 
 ### Grid view: Protect
 

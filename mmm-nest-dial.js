@@ -67,12 +67,15 @@ var mmmNestDial = (function() {
             maxValue: (options.temperatureScale === 'F') ? 90 : 30,
             hasLeaf: options.hasLeaf || false,
             targetTemp: options.targetTemp ? restrictTargetTemperature(+options.targetTemp) : options.minValue,
+            targetTempLow: options.targetTempLow || options.minValue,
+            targetTempHigh: options.targetTempHigh || options.maxValue,
             ambientTemp: options.ambientTemp ? roundHalf(+options.ambientTemp) : options.minValue,
             ecoTempLow: options.ecoTempLow || options.minValue,
             ecoTempHigh: options.ecoTempHigh || options.maxValue,
             isAwayMode: options.isAwayMode || false,
             isEcoMode: options.isEcoMode || false,
-            isOffMode: options.isOffMode || false
+            isOffMode: options.isOffMode || false,
+            isHeatCoolMode: options.isHeatCoolMode || false
         };
 
         // default options are for the `large` size
@@ -316,6 +319,9 @@ var mmmNestDial = (function() {
             if (options.isEcoMode) {
                 vMin = options.ecoTempLow;
                 vMax = options.ecoTempHigh;
+            } else if (options.isHeatCoolMode) {
+                vMin = options.targetTempLow;
+                vMax = options.targetTempHigh;
             } else if ((options.isAwayMode) || (options.isOffMode)) {
                 vMin = options.ambientTemp;
                 vMax = vMin;

@@ -257,12 +257,15 @@ Module.register('mmm-nest-status', {
                 temperatureScale: (units === 'imperial') ? 'F' : 'C',
                 hasLeaf: !t.fanOn && t.leafOn,
                 targetTemp: t.targetTemp,
+                targetTempLow: t.targetTempLow,
+                targetTempHigh: t.targetTempHigh,
                 ambientTemp: t.ambientTemp,
                 ecoTempLow: t.ecoTempLow,
                 ecoTempHigh: t.ecoTempHigh,
                 isAwayMode: this.awayState === 'away',
                 isEcoMode: t.isEcoMode,
-                isOffMode: t.isOffMode
+                isOffMode: t.isOffMode,
+                isHeatCoolMode: t.isHeatCoolMode
             });
 
             dialSvg = dialSvgNode.innerHTML;
