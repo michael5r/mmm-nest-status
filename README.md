@@ -4,8 +4,8 @@ The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/Magi
 
 This module displays both your [Nest](https://www.nest.com) thermostats and protect smoke detectors on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
-![image](https://user-images.githubusercontent.com/3209660/49417517-acdf8780-f743-11e8-8ae9-07da9f24b39e.png)
-*An example showing multiple thermostats and multiple smoke detectors (using the small & dark Protect design):*
+![image](https://user-images.githubusercontent.com/3209660/49621016-097fb400-f989-11e8-9fb2-bb824ac41203.png)
+*An example showing multiple thermostats and multiple smoke detectors (using the large size & classic mode for the thermostats, and the small size & dark mode for the protects):*
 
 ## Key Features
 - all states for the Nest thermostat (including Eco mode, Away mode, leaf/fan icons, etc) in 2 different designs and 3 sizes
@@ -55,10 +55,12 @@ Option               | Type             | Default   | Description
 `units`              | `string`         | config.js | One of: `imperial` (fahrenheit), `metric` (celsius)
 `updateInterval`     | `int`            | '60000'   | Nest recommends updating no more than once pr. minute.
 
+**Note:** `units` get their default value from the MagicMirror `config.js` file. I'd strongly suggest adding the value in there instead of adding it in this module.
+
 
 ## Configuration Options specific to the Grid view
 
-**The following options only apply if your `displayType` has been set to `grid` - they have no effect on the list view:**
+The following options only apply if your `displayType` has been set to `grid` - they have no effect on the list view:
 
 Option               | Type             | Default   | Description
 ---------------------|------------------|-----------|-------------------------------------------------------
