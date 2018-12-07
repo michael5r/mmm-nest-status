@@ -48,10 +48,10 @@ If, however, you wish to modify the HTML structure of the thermostats or smoke d
 Option               | Type             | Default   | Description
 ---------------------|------------------|-----------|-------------------------------------------------------
 `token`              | `int`            | --------- | **This value is required for this module to work.**
-`displayType`        | `string`         | `grid`    | One of: `grid`, `list`, [`list-id`](#list-view-with-id:-thermostat-&-protect)
+`displayType`        | `string`         | `grid`    | One of: `grid`, `list`, [`list-id`](#list-view-with-id-thermostat--protect)
 `displayMode`        | `string`         | `all`     | One of: `thermostat`, `protect`, `all`
-`thermostatsToShow`  | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat-&-protect)
-`protectsToShow`     | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat-&-protect)
+`thermostatsToShow`  | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
+`protectsToShow`     | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
 `units`              | `string`         | config.js | One of: `imperial` (fahrenheit), `metric` (celsius)
 `updateInterval`     | `int`            | '60000'   | Nest recommends updating no more than once pr. minute.
 
@@ -76,11 +76,11 @@ Option               | Type             | Default   | Description
 
 ### Grid view: Thermostat (Classic Mode)
 
+Need a new screenshot here.
+
+### Grid view: Thermostat (Non-Classic Mode)
+
 ![image](https://user-images.githubusercontent.com/3209660/49419333-f7fd9880-f74b-11e8-9e16-23aa80f6aa2d.png)
-
-### Grid view: Multiple Thermostats
-
-![image](https://user-images.githubusercontent.com/3209660/49419463-870ab080-f74c-11e8-8498-56a9f4f32e26.png)
 
 ### Grid view: Protect
 
