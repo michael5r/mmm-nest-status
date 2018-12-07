@@ -182,21 +182,24 @@
 
 .mmm-nest-status .size-large .circle,
 .mmm-nest-status .thermostat.size-large .dial,
-.mmm-nest-status .thermostat.size-large .temp {
+.mmm-nest-status .thermostat.size-large .temp,
+.mmm-nest-status .protect.size-large.dark .ring {
     width: 240px;
     height: 240px;
 }
 
 .mmm-nest-status .size-medium .circle,
 .mmm-nest-status .thermostat.size-medium .dial,
-.mmm-nest-status .thermostat.size-medium .temp {
+.mmm-nest-status .thermostat.size-medium .temp,
+.mmm-nest-status .protect.size-medium.dark .ring {
     width: 160px;
     height: 160px;
 }
 
 .mmm-nest-status .size-small .circle,
 .mmm-nest-status .thermostat.size-small .dial,
-.mmm-nest-status .thermostat.size-small .temp {
+.mmm-nest-status .thermostat.size-small .temp,
+.mmm-nest-status .protect.size-small.dark .ring {
     width: 80px;
     height: 80px;
 }
@@ -716,21 +719,6 @@
     -webkit-animation: pulseGray 3s ease-in-out 1s infinite;
     -moz-animation: pulseGray 3s ease-in-out 1s infinite;
     animation: pulseGray 3s ease-in-out 1s infinite;
-}
-
-.mmm-nest-status .protect.size-large.dark .ring {
-    height: 240px;
-    width: 240px;
-}
-
-.mmm-nest-status .protect.size-medium.dark .ring {
-    height: 160px;
-    width: 160px;
-}
-
-.mmm-nest-status .protect.size-small.dark .ring {
-    height: 80px;
-    width: 80px;
 }
 
 .mmm-nest-status .protect.green .ring {
