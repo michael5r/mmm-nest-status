@@ -10,6 +10,7 @@
 
 */
 
+
 /* DELETE ME START */
 
 @font-face {
@@ -70,10 +71,15 @@
     justify-content: flex-end;
 }
 
+.mmm-nest-status .nest-wrapper .hidden {
+    display: none;
+}
+
 /* when the items aren't grouped */
 .mmm-nest-status .nest-wrapper + .nest-wrapper {
     margin-top: 10px;
 }
+
 
 /*
     LIST VIEW
@@ -82,10 +88,6 @@
 .mmm-nest-status .nest-wrapper.list {
     display: block; /* no flex */
     margin: 0;
-}
-
-.mmm-nest-status .nest-wrapper .hidden {
-    display: none;
 }
 
 .mmm-nest-status .nest-list {
@@ -155,344 +157,346 @@
     color: #ef4730;
 }
 
+
 /*
     GRID VIEW: SHARED
 */
 
-.mmm-nest-status .nest-wrapper .title {
-    margin-bottom: 15px;
+.mmm-nest-status .size-large {
+    width: 240px;
+    min-height: 240px;
+    font-size: 70px;
+}
+
+.mmm-nest-status .size-medium {
+    width: 160px;
+    min-height: 160px;
+    font-size: 46px;
+}
+
+.mmm-nest-status .size-small {
+    width: 80px;
+    min-height: 80px;
+    font-size: 25px;
+}
+
+.mmm-nest-status .size-large .circle,
+.mmm-nest-status .thermostat.size-large .dial,
+.mmm-nest-status .thermostat.size-large .temp {
+    width: 240px;
+    height: 240px;
+}
+
+.mmm-nest-status .size-medium .circle,
+.mmm-nest-status .thermostat.size-medium .dial,
+.mmm-nest-status .thermostat.size-medium .temp {
+    width: 160px;
+    height: 160px;
+}
+
+.mmm-nest-status .size-small .circle,
+.mmm-nest-status .thermostat.size-small .dial,
+.mmm-nest-status .thermostat.size-small .temp {
+    width: 80px;
+    height: 80px;
+}
+
+.mmm-nest-status .title {
     border-bottom: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 15px;
 }
 
-.mmm-nest-status .nest-wrapper .title-bot .title {
-    margin-top: 15px;
-    margin-bottom: 0;
+.mmm-nest-status .size-large .title,
+.mmm-nest-status .size-medium .title {
+    margin-bottom: 20px;
+}
+
+.mmm-nest-status .size-small .title {
+    font-size: 12px;
+    margin-bottom: 10px;
     white-space: normal;
     overflow: visible;
 }
 
-.mmm-nest-status .nest-wrapper .circle {
-    height: 140px;
-    width: 140px;
-    border-radius: 50%;
-    position: relative;
-    margin: 0 10px;
+.mmm-nest-status .title-bot .title {
+    margin-top: 15px;
+    margin-bottom: 0;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat,
-.mmm-nest-status .nest-wrapper .protect {
-    width: 160px;
+.mmm-nest-status .size-large .title-bot .title,
+.mmm-nest-status .size-medium .title-bot .title {
+    margin-top: 20px;
+}
+
+.mmm-nest-status .size-small .title-bot .title {
+    margin-top: 10px;
+}
+
+.mmm-nest-status .circle {
+    border-radius: 50%;
+    position: relative;
+}
+
+.mmm-nest-status .thermostat,
+.mmm-nest-status .protect {
     margin: 10px;
     position: relative;
 }
 
-/*
-    GRID VIEW: PROTECT
-*/
-
-.mmm-nest-status .nest-wrapper .protect .circle {
-    background-color: #fff;
-    height: 138px;
-    width: 138px;
-    border: 1px solid rgba(0,0,0,0.9);
-    box-shadow: 0 0 8px 2px #4a535b;
-}
-
-.mmm-nest-status .nest-wrapper .protect.dark .circle {
-    background-color: transparent;
-    height: 140px;
-    width: 140px;
-    border: 0;
-    box-shadow: none;
-}
-
-.mmm-nest-status .nest-wrapper .protect .ring {
-    height: 118px;
-    width: 118px;
-    border-radius: 50%;
-    position: absolute;
-    z-index: 1;
-    left: 10px;
-    top: 10px;
-    border: 8px solid #4a535b;
-    box-sizing: border-box;
-}
-
-.mmm-nest-status .nest-wrapper .protect.dark .ring {
-    height: 140px;
-    width: 140px;
-    left: 0;
-    top: 0;
-    box-shadow: 0 0 8px 2px #6b7883;
-    -webkit-animation: pulseGray 3s ease-in-out 1s infinite;
-    -moz-animation: pulseGray 3s ease-in-out 1s infinite;
-    animation: pulseGray 3s ease-in-out 1s infinite;
-}
-
-.mmm-nest-status .nest-wrapper .protect.green .ring {
-    border: 8px solid #11d611;
-}
-
-.mmm-nest-status .nest-wrapper .protect.dark.green .ring {
-    box-shadow: 0 0 8px 0px #76e53e;
-    -webkit-animation-name: pulseGreen;
-    -moz-animation-name: pulseGreen;
-    animation-name: pulseGreen;
-}
-
-.mmm-nest-status .nest-wrapper .protect.yellow .ring {
-    border: 8px solid #ffbe00;
-}
-
-.mmm-nest-status .nest-wrapper .protect.dark.yellow .ring {
-    box-shadow: 0 0 8px 0px #ffd400;
-    -webkit-animation-name: pulseYellow;
-    -moz-animation-name: pulseYellow;
-    animation-name: pulseYellow;
-}
-
-.mmm-nest-status .nest-wrapper .protect.red .ring {
-    border: 8px solid #ea3003;
-}
-
-.mmm-nest-status .nest-wrapper .protect.dark.red .ring {
-    box-shadow: 0 0 8px 2px #f4471e;
-    -webkit-animation-name: pulseRed;
-    -moz-animation-name: pulseRed;
-    animation-name: pulseRed;
-}
-
-.mmm-nest-status .nest-wrapper .protect .status {
-    width: 140px;
-    height: 140px;
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: 0;
-    color: #666;
-    font-size: 15px;
-    line-height: 18px;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.mmm-nest-status .nest-wrapper .protect.yellow .status {
-    color: #d48200;
-}
-
-.mmm-nest-status .nest-wrapper .protect.dark.yellow .status {
-    color: #ffde00;
-}
-
-.mmm-nest-status .nest-wrapper .protect.red .status {
-    color: #d4250d;
-}
-
-.mmm-nest-status .nest-wrapper .protect.dark.red .status {
-    color: #ef4730;
-}
-
-.mmm-nest-status .nest-wrapper .protect .status .icon-battery {
-    background: url('icons/icon-battery.svg');
-    background-size: 30px 25px;
-    width: 30px;
-    height: 25px;
-    margin-top: -5px;
-    margin-bottom: 5px;
-    animation: fadeInOut 3s ease-in-out 1s infinite;
-}
-
-.mmm-nest-status .nest-wrapper .protect.dark .status .icon-battery {
-    margin-top: 0;
-}
-
-
-/*
-    GRID VIEW: PROTECT (SMALL VERSION)
-*/
-
-.mmm-nest-status .nest-wrapper .protect.sml {
-    width: 80px;
-}
-
-.mmm-nest-status .nest-wrapper .protect.sml .circle {
-    height: 78px;
-    width: 78px;
-    margin: 0;
-}
-
-.mmm-nest-status .nest-wrapper .protect.sml.dark .circle {
-    background-color: transparent;
-    height: 80px;
-    width: 80px;
-    border: 0;
-    box-shadow: none;
-}
-
-.mmm-nest-status .nest-wrapper .protect.sml .ring {
-    height: 66px;
-    width: 66px;
-    left: 6px;
-    top: 6px;
-    border-width: 5px !important;
-}
-
-.mmm-nest-status .nest-wrapper .protect.sml.dark .ring {
-    height: 80px;
-    width: 80px;
-    left: 0;
-    top: 0;
-}
-
-.mmm-nest-status .nest-wrapper .protect.sml .status {
-    height: 56px;
-    width: 48px;
-    top: 12px;
-    left: 16px;
-    font-size: 12px;
-    line-height: 16px;
-}
-
-.mmm-nest-status .nest-wrapper .protect.sml.dark .status {
-    width: 60px;
-    left: 10px;
-}
-
-.mmm-nest-status .nest-wrapper .protect.sml .title {
-    font-size: 12px;
-    margin-top: 10px;
-}
-
-.mmm-nest-status .nest-wrapper .protect.sml .status .icon-battery {
-    margin-bottom: 0;
+.mmm-nest-status .thermostat.size-large + .thermostat.size-large,
+.mmm-nest-status .protect.size-large + .protect.size-large {
+    margin-left: 25px;
 }
 
 
 /*
     GRID VIEW: THERMOSTAT
     Thermostat gets one class from each of the following groups:
-    - heating, cooling, off (from hvacState)
-    - heat, cool, heat-cool, eco (from hvacMode)
+    - heating, cooling (from hvacState)
+    - heat, cool, heat-cool, eco, off (from hvacMode)
+    - size-large, size-medium, size-small (from thermostatSize)
 */
 
-.mmm-nest-status .nest-wrapper .thermostat.off .circle {
-    background: rgb(74, 83, 91);
-    background: -moz-linear-gradient(90deg, rgb(74, 83, 91) 0%, rgb(40, 48, 55) 100%);
-    background: -webkit-linear-gradient(90deg, rgb(74, 83, 91) 0%, rgb(40, 48, 55) 100%);
-    background: -o-linear-gradient(90deg, rgb(74, 83, 91) 0%, rgb(40, 48, 55) 100%);
-    background: -ms-linear-gradient(90deg, rgb(74, 83, 91) 0%, rgb(40, 48, 55) 100%);
-    background: linear-gradient(180deg, rgb(74, 83, 91) 0%, rgb(40, 48, 55) 100%);
+.mmm-nest-status .thermostat .circle {
+    margin: 10px;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.heating .circle {
-    background: rgb(238, 127, 0);
-    background: -moz-linear-gradient(90deg, rgb(238, 127, 0) 0%, rgb(229, 89, 40) 100%);
-    background: -webkit-linear-gradient(90deg, rgb(238, 127, 0) 0%, rgb(229, 89, 40) 100%);
-    background: -o-linear-gradient(90deg, rgb(238, 127, 0) 0%, rgb(229, 89, 40) 100%);
-    background: -ms-linear-gradient(90deg, rgb(238, 127, 0) 0%, rgb(229, 89, 40) 100%);
-    background: linear-gradient(180deg, rgb(238, 127, 0) 0%, rgb(229, 89, 40) 100%);
+.mmm-nest-status .thermostat.size-large .circle {
+    width: 220px;
+    height: 220px;
+}
+
+.mmm-nest-status .thermostat.size-medium .circle {
+    width: 140px;
+    height: 140px;
+}
+
+.mmm-nest-status .thermostat.size-small .circle {
+    width: 80px;
+    height: 80px;
+    margin: 0;
+}
+
+.mmm-nest-status .thermostat .circle {
+    background: #4a535b;
+    background: -moz-linear-gradient(90deg, #4a535b 0%, rgb(40, 48, 55) 100%);
+    background: -webkit-linear-gradient(90deg, #4a535b 0%, rgb(40, 48, 55) 100%);
+    background: -o-linear-gradient(90deg, #4a535b 0%, rgb(40, 48, 55) 100%);
+    background: -ms-linear-gradient(90deg, #4a535b 0%, rgb(40, 48, 55) 100%);
+    background: linear-gradient(180deg, #4a535b 0%, rgb(40, 48, 55) 100%);
+}
+
+.mmm-nest-status .thermostat.heating .circle {
+    background: #E36304;
+    background: -moz-linear-gradient(90deg, #E36304 0%, rgb(229, 89, 40) 100%);
+    background: -webkit-linear-gradient(90deg, #E36304 0%, rgb(229, 89, 40) 100%);
+    background: -o-linear-gradient(90deg, #E36304 0%, rgb(229, 89, 40) 100%);
+    background: -ms-linear-gradient(90deg, #E36304 0%, rgb(229, 89, 40) 100%);
+    background: linear-gradient(180deg, #E36304 0%, rgb(229, 89, 40) 100%);
     color: #FFF;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.cooling .circle {
-    background: rgb(5, 95, 255);
-    background: -moz-linear-gradient(90deg, rgb(5, 95, 255) 0%, rgb(1, 57, 255) 100%);
-    background: -webkit-linear-gradient(90deg, rgb(5, 95, 255) 0%, rgb(1, 57, 255) 100%);
-    background: -o-linear-gradient(90deg, rgb(5, 95, 255) 0%, rgb(1, 57, 255) 100%);
-    background: -ms-linear-gradient(90deg, rgb(5, 95, 255) 0%, rgb(1, 57, 255) 100%);
-    background: linear-gradient(180deg, rgb(5, 95, 255) 0%, rgb(1, 57, 255) 100%);
+.mmm-nest-status .thermostat.cooling .circle {
+    background: #007af1;
+    background: -moz-linear-gradient(90deg, #007af1 0%, rgb(1, 57, 255) 100%);
+    background: -webkit-linear-gradient(90deg, #007af1 0%, rgb(1, 57, 255) 100%);
+    background: -o-linear-gradient(90deg, #007af1 0%, rgb(1, 57, 255) 100%);
+    background: -ms-linear-gradient(90deg, #007af1 0%, rgb(1, 57, 255) 100%);
+    background: linear-gradient(180deg, #007af1 0%, rgb(1, 57, 255) 100%);
     color: #FFF;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .dial {
-    background: url('images/dial-ticks.svg');
-    background-size: 160px 160px;
-    height: 160px;
-    width: 160px;
+.mmm-nest-status .thermostat .dial {
+    background-image: url('images/dial-ticks.svg');
     border-radius: 50%;
     position: absolute;
     z-index: 1;
     opacity: 0.2;
-    left: -10px;
     top: -10px;
+    left: -10px;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.heating .dial,
-.mmm-nest-status .nest-wrapper .thermostat.cooling .dial {
+.mmm-nest-status .thermostat.size-large .dial {
+    background-size: 240px 240px;
+}
+
+.mmm-nest-status .thermostat.size-medium .dial {
+    background-size: 160px 160px;
+}
+
+.mmm-nest-status .thermostat.size-small .dial {
+    background-size: 80px 80px;
+    top: 0;
+    left: 0;
+}
+
+.mmm-nest-status .thermostat.heating .dial,
+.mmm-nest-status .thermostat.cooling .dial {
     opacity: 0.3;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .status {
-    font-size: 16px;
+.mmm-nest-status .thermostat.classic .dial {
+    background: none;
+    position: relative;
+    opacity: 1;
+    top: 0;
+    left: 0;
+}
+
+.mmm-nest-status .thermostat.classic.heating .dial {
+    box-shadow: 0 0 20px 0px #E36304;
+}
+
+.mmm-nest-status .thermostat.classic.cooling .dial {
+    box-shadow: 0 0 20px 0px #007AF1;
+}
+
+.mmm-nest-status .thermostat .status {
     position: absolute;
-    z-index: 3;
-    top: 15px;
+    z-index: 5;
     left: 0;
     right: 0;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.heating .status,
-.mmm-nest-status .nest-wrapper .thermostat .status.heat {
-    left: 30px;
+.mmm-nest-status .thermostat.size-large .status {
+    top: 50px;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+.mmm-nest-status .thermostat.size-medium .status {
+    top: 15px;
+    font-size: 16px;
+}
+
+.mmm-nest-status .thermostat.size-small .status {
+    top: 15px;
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.mmm-nest-status .thermostat .status-left {
     right: auto;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.cooling .status,
-.mmm-nest-status .nest-wrapper .thermostat .status.cool {
+.mmm-nest-status .thermostat.size-large .status-left {
+    left: 50px;
+}
+
+.mmm-nest-status .thermostat.size-medium .status-left {
+    left: 30px;
+}
+
+.mmm-nest-status .thermostat.size-small .status-left {
+    left: 15px;
+}
+
+.mmm-nest-status .thermostat .status-right {
     left: auto;
+}
+
+.mmm-nest-status .thermostat.size-large .status-right {
+    right: 50px;
+}
+
+.mmm-nest-status .thermostat.size-medium .status-right {
     right: 30px;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .temp {
-    height: 140px;
-    width: 140px;
-    font-size: 45px;
+.mmm-nest-status .thermostat.size-small .status-right {
+    right: 15px;
+}
+
+.mmm-nest-status .thermostat .temp {
+    font-size: 1em;
+    line-height: 1em;
     font-weight: 700;
-    line-height: 140px;
+    color: #fff;
     text-align: center;
     position: absolute;
-    z-index: 2;
+    z-index: 4;
+    top: -10px;
+    left: -10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .temp small {
-    font-size: 18px;
-    vertical-align: middle;
+.mmm-nest-status .thermostat .temp .dot {
+    font-size: 0.4em;
+}
+
+.mmm-nest-status .thermostat .temp-status {
+    font-size: 0.22em;
+    line-height: 0.22em;
+    font-weight: 500;
+    padding-bottom: 0.4em;
+}
+
+.mmm-nest-status .thermostat.heat-cool .temp {
+    font-size: 0.8em;
+    color: #aaa;
+    flex-direction: row;
+}
+
+.mmm-nest-status .thermostat.heat-cool .temp-status {
+    display: none;
+}
+
+.mmm-nest-status .thermostat.heating .temp,
+.mmm-nest-status .thermostat.cooling .temp {
     color: #fff;
-    display: inline-block;
-    line-height: 1;
-    padding: 0 3px 8px 5px;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.heat-cool .temp,
-.mmm-nest-status .nest-wrapper .thermostat.eco .temp {
-    font-size: 35px;
-}
-
-.mmm-nest-status .nest-wrapper .thermostat.eco .temp {
+.mmm-nest-status .thermostat.eco .temp,
+.mmm-nest-status .thermostat.off .temp {
+    font-size: 0.571em;
     font-weight: 400;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.heating .temp,
-.mmm-nest-status .nest-wrapper .thermostat.cooling .temp {
-    color: #fff;
+.mmm-nest-status .thermostat.size-large .temp .dot {
+    padding: 0 3px 10px 5px;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .humidity {
-    font-size: large;
+.mmm-nest-status .thermostat.size-medium .temp .dot {
+    padding: 0 3px 8px 5px;
+}
+
+.mmm-nest-status .thermostat.size-small .temp {
+    top: 0;
+    left: 0;
+}
+
+.mmm-nest-status .thermostat.size-small .temp .dot {
+    padding: 0 1px 4px 2px;
+}
+
+/* humidity text */
+
+.mmm-nest-status .thermostat .humidity {
     line-height: 1;
     font-weight: 700;
     text-align: center;
     padding-top: 10px;
-    margin: 0 10px;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .humidity:after {
+.mmm-nest-status .thermostat.size-large .humidity {
+    font-size: 26px;
+}
+
+.mmm-nest-status .thermostat.size-medium .humidity {
+    font-size: 18px;
+}
+
+.mmm-nest-status .thermostat.size-small .humidity {
+    font-size: 16px;
+}
+
+.mmm-nest-status .thermostat .humidity:after {
     content: 'Inside Humidity';
     text-transform: uppercase;
     color: #999;
@@ -502,37 +506,341 @@
     line-height: 1.5;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.heating .humidity,
-.mmm-nest-status .nest-wrapper .thermostat.cooling .humidity {
+.mmm-nest-status .thermostat.size-small .humidity:after {
+    content: 'Humidity';
+}
+
+.mmm-nest-status .thermostat.heating .humidity,
+.mmm-nest-status .thermostat.cooling .humidity {
     color: #fff;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .icn {
+/* fan & leaf icons */
+
+.mmm-nest-status .thermostat .icn {
     background-size: 15px 15px;
     background-repeat: no-repeat;
     position: absolute;
-    bottom: 70px;
-    left: 72px;
-    z-index: 4;
+    z-index: 10;
     width: 15px;
     height: 15px;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .icn.fan {
+.mmm-nest-status .thermostat.size-large .icn {
+    background-size: 30px 30px;
+    bottom: 95px;
+    left: 105px;
+    width: 30px;
+    height: 30px;
+}
+
+.mmm-nest-status .thermostat.size-medium .icn {
+    bottom: 70px;
+    left: 72px;
+}
+
+.mmm-nest-status .thermostat.size-small .icn {
+    bottom: 52px;
+    left: 32px;
+}
+
+.mmm-nest-status .thermostat .icn.fan {
     background-image: url('icons/icon-fan.png');
     -webkit-animation: fanSpin 4s linear infinite;
     -moz-animation: fanSpin 4s linear infinite;
     animation: fanSpin 4s linear infinite;
 }
 
-.mmm-nest-status .nest-wrapper .thermostat.heating .icn.fan,
-.mmm-nest-status .nest-wrapper .thermostat.cooling .icn.fan {
+.mmm-nest-status .thermostat.heating .icn.fan,
+.mmm-nest-status .thermostat.cooling .icn.fan {
     background-image: url('icons/icon-fan-white.png');
 }
 
-.mmm-nest-status .nest-wrapper .thermostat .icn.leaf {
+.mmm-nest-status .thermostat .icn.leaf {
     background-image: url('icons/icon-leaf.png');
 }
+
+/*
+    GRID VIEW: THERMOSTAT CLASSIC DIAL
+*/
+
+.mmm-nest-status .thermostat.classic.size-large .title,
+.mmm-nest-status .thermostat.classic.size-medium .title {
+    margin-bottom: 15px;
+}
+
+.mmm-nest-status .thermostat.classic .temp {
+    top: 0;
+    left: 0;
+}
+
+.mmm-nest-status .dial-classic {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+.mmm-nest-status .dial-classic .icn-leaf {
+    fill: #13EB13;
+    display: block;
+}
+
+.mmm-nest-status .thermostat .dial-classic .dial-circle {
+    fill: url(#dial-off-gradient) #4a535b;
+}
+
+.mmm-nest-status .thermostat.heating .dial-classic .dial-circle {
+    fill: url(#dial-heating-gradient) #E36304;
+}
+
+.mmm-nest-status .thermostat.cooling .dial-classic .dial-circle {
+    fill: url(#dial-cooling-gradient) #007AF1;
+}
+
+.mmm-nest-status .dial-classic .dial-ticks path {
+    fill: rgba(255, 255, 255, 0.3);
+}
+
+.mmm-nest-status .dial-classic .dial-ticks path.active {
+    fill: rgba(255, 255, 255, 0.8);
+}
+
+.mmm-nest-status .dial-classic .dial-ticks path.active.lrg {
+    fill: #fff;
+}
+
+.mmm-nest-status .dial-classic .label-temp {
+    fill: #fff;
+    font-weight: 700;
+    text-anchor: middle;
+    alignment-baseline: central;
+}
+
+.mmm-nest-status .dial-classic .label-temp.label-back {
+    stroke: #3b444c;
+    stroke-opacity: 0.8;
+}
+
+.mmm-nest-status .size-large .dial-classic .label-temp {
+    font-size: 18px;
+}
+
+.mmm-nest-status .size-large .dial-classic .label-temp.label-back {
+    stroke-width: 4;
+}
+
+.mmm-nest-status .size-medium .dial-classic .label-temp {
+    font-size: 15px;
+}
+
+.mmm-nest-status .size-medium .dial-classic .label-temp.label-back {
+    stroke-width: 3;
+}
+
+.mmm-nest-status .size-small .dial-classic .label-temp {
+    font-size: 10px;
+}
+
+.mmm-nest-status .size-small .dial-classic .label-temp.label-back {
+    stroke-width: 2;
+}
+
+.mmm-nest-status .thermostat.heating .dial-classic .label-temp.label-back {
+    stroke: #ec7800;
+}
+
+.mmm-nest-status .thermostat.cooling .dial-classic .label-temp.label-back {
+    stroke: #0060ff;
+}
+
+
+/*
+    GRID VIEW: PROTECT
+*/
+
+.mmm-nest-status .protect .circle {
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.9);
+    box-shadow: 0 0 8px 2px #4a535b;
+    box-sizing: border-box;
+}
+
+.mmm-nest-status .protect.dark .circle {
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.mmm-nest-status .protect .ring {
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+    border: 1px solid #4a535b;
+    box-sizing: border-box;
+}
+
+.mmm-nest-status .protect.size-large .ring {
+    height: 208px;
+    width: 208px;
+    left: 15px;
+    top: 15px;
+    border-width: 13px;
+}
+
+.mmm-nest-status .protect.size-large.dark .ring {
+    border-width: 8px;
+}
+
+.mmm-nest-status .protect.size-medium .ring {
+    height: 138px;
+    width: 138px;
+    left: 10px;
+    top: 10px;
+    border-width: 8px;
+}
+
+.mmm-nest-status .protect.size-small .ring {
+    height: 66px;
+    width: 66px;
+    left: 6px;
+    top: 6px;
+    border-width: 5px;
+}
+
+.mmm-nest-status .protect.dark .ring {
+    left: 0;
+    top: 0;
+    box-shadow: 0 0 8px 2px #6b7883;
+    -webkit-animation: pulseGray 3s ease-in-out 1s infinite;
+    -moz-animation: pulseGray 3s ease-in-out 1s infinite;
+    animation: pulseGray 3s ease-in-out 1s infinite;
+}
+
+.mmm-nest-status .protect.size-large.dark .ring {
+    height: 240px;
+    width: 240px;
+}
+
+.mmm-nest-status .protect.size-medium.dark .ring {
+    height: 160px;
+    width: 160px;
+}
+
+.mmm-nest-status .protect.size-small.dark .ring {
+    height: 80px;
+    width: 80px;
+}
+
+.mmm-nest-status .protect.green .ring {
+    border-color: #11d611;
+}
+
+.mmm-nest-status .protect.dark.green .ring {
+    box-shadow: 0 0 8px 0px #76e53e;
+    -webkit-animation-name: pulseGreen;
+    -moz-animation-name: pulseGreen;
+    animation-name: pulseGreen;
+}
+
+.mmm-nest-status .protect.yellow .ring {
+    border-color: #ffbe00;
+}
+
+.mmm-nest-status .protect.dark.yellow .ring {
+    box-shadow: 0 0 8px 0px #ffd400;
+    -webkit-animation-name: pulseYellow;
+    -moz-animation-name: pulseYellow;
+    animation-name: pulseYellow;
+}
+
+.mmm-nest-status .protect.red .ring {
+    border-color: #ea3003;
+    animation: fadeInOut 3s ease-in-out 1s infinite;
+}
+
+.mmm-nest-status .protect.dark.red .ring {
+    box-shadow: 0 0 8px 2px #f4471e;
+    -webkit-animation-name: pulseRed;
+    -moz-animation-name: pulseRed;
+    animation-name: pulseRed;
+}
+
+.mmm-nest-status .protect .status {
+    position: absolute;
+    z-index: 2;
+    font-size: 0.391em;
+    line-height: 125%;
+    color: #11d611;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.mmm-nest-status .protect.size-large .status {
+    width: 240px;
+    height: 240px;
+}
+
+.mmm-nest-status .protect.size-medium .status {
+    width: 160px;
+    height: 160px;
+}
+
+.mmm-nest-status .protect.size-small .status {
+    height: 56px;
+    width: 48px;
+    top: 12px;
+    left: 16px;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.mmm-nest-status .protect.yellow .status {
+    color: #d48200;
+}
+
+.mmm-nest-status .protect.dark.yellow .status {
+    color: #ffde00;
+}
+
+.mmm-nest-status .protect.red .status {
+    color: #d4250d;
+}
+
+.mmm-nest-status .protect.dark.red .status {
+    color: #ef4730;
+}
+
+.mmm-nest-status .protect .status .icon-battery {
+    background: url('icons/icon-battery.svg');
+    margin-top: -5px;
+    margin-bottom: 5px;
+    animation: fadeInOut 1s ease-in-out 1s infinite;
+}
+
+.mmm-nest-status .protect.size-large .status .icon-battery {
+    background-size: 45px 38px;
+    width: 45px;
+    height: 38px;
+}
+
+.mmm-nest-status .protect.size-medium .status .icon-battery {
+    background-size: 30px 25px;
+    width: 30px;
+    height: 25px;
+}
+
+.mmm-nest-status .protect.size-small .status .icon-battery {
+    background-size: 30px 25px;
+    width: 30px;
+    height: 25px;
+    margin: 0;
+}
+
 
 /*
     ANIMATIONS
@@ -594,37 +902,37 @@
 
 @-webkit-keyframes pulseRed {
     0% { opacity: 1; box-shadow: 0 0 8px 0px #f4471e; }
-    50% { opacity: 0; box-shadow: 0 0 16px 0px #f4471e; }
+    50% { opacity: 0.2; box-shadow: 0 0 16px 0px #f4471e; }
     100% { opacity: 1; box-shadow: 0 0 8px 0px #f4471e; }
 }
 
 @-moz-keyframes pulseRed {
     0% { opacity: 1; box-shadow: 0 0 8px 0px #f4471e; }
-    50% { opacity: 0; box-shadow: 0 0 16px 0px #f4471e; }
+    50% { opacity: 0.2; box-shadow: 0 0 16px 0px #f4471e; }
     100% { opacity: 1; box-shadow: 0 0 8px 0px #f4471e; }
 }
 
 @keyframes pulseRed {
     0% { opacity: 1; box-shadow: 0 0 8px 0px #f4471e; }
-    50% { opacity: 0; box-shadow: 0 0 16px 0px #f4471e; }
+    50% { opacity: 0.2; box-shadow: 0 0 16px 0px #f4471e; }
     100% { opacity: 1; box-shadow: 0 0 8px 0px #f4471e; }
 }
 
 @-webkit-keyframes fadeInOut {
     0% { opacity: 1; }
-    50% { opacity: 0; }
+    50% { opacity: 0.2; }
     100% { opacity: 1; }
 }
 
 @-moz-keyframes fadeInOut {
     0% { opacity: 1; }
-    50% { opacity: 0; }
+    50% { opacity: 0.2; }
     100% { opacity: 1; }
 }
 
 @keyframes fadeInOut {
     0% { opacity: 1; }
-    50% { opacity: 0; }
+    50% { opacity: 0.2; }
     100% { opacity: 1; }
 }
 

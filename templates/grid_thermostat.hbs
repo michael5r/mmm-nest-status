@@ -1,12 +1,19 @@
-<div class="thermostat thermostat-{{ id }} {{ classState }} {{ classMode }} {{ classSize }}">
+<div class="{{ classes }}">
     {{#if showNames}}
         <header class="title">{{{ name }}}</header>
     {{/if}}
-    <div class="circle">
-        <div class="dial"></div>
-        <span class="status {{ statusClass }}">{{ ambientTemp }}</span>
-        <div class="temp">{{{ targetTemp }}}</div>
-    </div>
+    {{#if isClassic}}
+        <div class="dial">
+            {{{ dialSvg }}}
+            <div class="temp">{{#if showTempStatus}}<small class="temp-status">{{ tempStatusText }}</small>{{/if}}{{{ targetTemp }}}</div>
+        </div>
+    {{else}}
+        <div class="circle">
+            <div class="dial"></div>
+            <span class="{{ statusClasses }}">{{ ambientTemp }}</span>
+            <div class="temp">{{#if showTempStatus}}<small class="temp-status">{{ tempStatusText }}</small>{{/if}}{{{ targetTemp }}}</div>
+        </div>
+    {{/if}}
     <div class="humidity">{{ humidity }}</div>
     {{#if fanOn}}
         <span class="icn fan"></span>
