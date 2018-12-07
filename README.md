@@ -78,11 +78,27 @@ Option               | Type             | Default   | Description
 
 ### Grid view: Thermostat (Classic Mode)
 
-Need a new screenshot here.
+No screenshots of the large size - it looks exactly like the medium size below, just ... well ... larger.
+
+#### Medium Size
+
+![image](https://user-images.githubusercontent.com/3209660/49622379-fbcd2d00-f98e-11e8-8ab0-13a957b89db4.png)
+
+#### Small Size
+
+
 
 ### Grid view: Thermostat (Non-Classic Mode)
 
-![image](https://user-images.githubusercontent.com/3209660/49419333-f7fd9880-f74b-11e8-9e16-23aa80f6aa2d.png)
+The non-classic view is a bit more abstract and doesn't include quite as detailed information as the `classic` mode. Again, only medium and small size screenshots below.
+
+#### Medium Size
+
+![image](https://user-images.githubusercontent.com/3209660/49622303-a1cc6780-f98e-11e8-8a64-18b4fd8772dc.png)
+
+#### Small Size
+
+
 
 ### Grid view: Protect
 
