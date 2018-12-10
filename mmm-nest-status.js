@@ -499,17 +499,17 @@ Module.register('mmm-nest-status', {
             this.errMsg = 'Please run getToken.sh and add your Nest API token to the MagicMirror config.js file.';
             this.updateDom(this.config.animationSpeed);
         } else {
-            this.sendSocketNotification('NEST_STATUS_GET', {
+            this.sendSocketNotification('MMM_NEST_STATUS_GET', {
                 token: this.config.token
             });
         }
     },
 
     socketNotificationReceived: function(notification, payload) {
-        if (notification === 'NEST_STATUS_DATA') {
+        if (notification === 'MMM_NEST_STATUS_DATA') {
             this.processNestData(payload);
             this.scheduleUpdate(this.updateInterval);
-        } else if (notification === 'NEST_STATUS_DATA_ERROR') {
+        } else if (notification === 'MMM_NEST_STATUS_DATA_ERROR') {
             this.errMsg = 'Nest API Error: ' + payload;
             this.updateDom(this.config.animationSpeed);
         }

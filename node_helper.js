@@ -9,7 +9,7 @@ module.exports = NodeHelper.create({
 
     socketNotificationReceived: function(notification, payload) {
 
-        if (notification === 'NEST_STATUS_GET') {
+        if (notification === 'MMM_NEST_STATUS_GET') {
 
             var token = payload.token;
             var url = 'https://developer-api.nest.com/?auth=' + token;
@@ -18,10 +18,10 @@ module.exports = NodeHelper.create({
             request(url, {method: 'GET'}, function(err, res, body) {
 
                 if ((err) || (res.statusCode !== 200)) {
-                    self.sendSocketNotification('NEST_STATUS_DATA_ERROR', err);
+                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', err);
                 } else {
                     var data = JSON.parse(body);
-                    self.sendSocketNotification('NEST_STATUS_DATA', data);
+                    self.sendSocketNotification('MMM_NEST_STATUS_DATA', data);
                 }
 
             });
