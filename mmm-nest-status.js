@@ -507,6 +507,9 @@ Module.register('mmm-nest-status', {
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === 'MMM_NEST_STATUS_DATA') {
+            // broadcast Nest data update
+            this.sendNotification('MMM_NEST_STATUS_UPDATE', payload);
+            // process the data
             this.processNestData(payload);
             this.scheduleUpdate(this.updateInterval);
         } else if (notification === 'MMM_NEST_STATUS_DATA_ERROR') {
