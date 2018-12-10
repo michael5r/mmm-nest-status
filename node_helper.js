@@ -20,8 +20,12 @@ module.exports = NodeHelper.create({
                 if ((err) || (res.statusCode !== 200)) {
                     self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', err);
                 } else {
-                    var data = JSON.parse(body);
-                    self.sendSocketNotification('MMM_NEST_STATUS_DATA', data);
+                    if (body === {}) {
+                        self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', 'Token works, but no data was received.<br>Make sure you are using the master account for your Nest.');
+                    } else {
+                        var data = JSON.parse(body);
+                        self.sendSocketNotification('MMM_NEST_STATUS_DATA', data);
+                    }
                 }
 
             });
