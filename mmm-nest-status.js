@@ -29,7 +29,7 @@ Module.register('mmm-nest-status', {
         updateInterval: 60 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '1.1.0'
+        version: '1.2.0'
     },
 
     getScripts: function() {
@@ -59,6 +59,8 @@ Module.register('mmm-nest-status', {
         this.errMsg = '';
 
         this.loaded = false;
+
+
         this.scheduleUpdate(this.config.initialLoadDelay);
 
         this.thermostats = [];
@@ -492,39 +494,32 @@ Module.register('mmm-nest-status', {
 
     },
 
-    updateNests: function() {
-        // use the Nest API to get the data
+    getData: function() {
 
         if (this.config.token === '') {
             this.errMsg = 'Please run getToken.sh and add your Nest API token to the MagicMirror config.js file.';
             this.updateDom(this.config.animationSpeed);
         } else {
-
-            var token = this.config.token;
-            var url = 'https://developer-api.nest.com/?auth=' + token;
-            var self = this;
-            var xhr = new XMLHttpRequest();
-
-            xhr.addEventListener('readystatechange', function () {
-                if (this.readyState === 4) {
-                    if (this.status === 200) {
-                        if (this.response == '{}') {
-                            self.errMsg = 'Token works, but no data was received.<br>Make sure you are using the master account for your Nest.';
-                            self.updateDom(self.config.animationSpeed);
-                        } else {
-                            self.processNestData(JSON.parse(this.response));
-                        }
-                    } else {
-                        console.log('Nest API Error: ' + this.status);
-                    }
-                }
+            this.sendSocketNotification('MMM_NEST_STATUS_GET', {
+                token: this.config.token
             });
-
-            xhr.open('GET', url, true);
-            xhr.send();
-
-            self.scheduleUpdate(self.updateInterval);
         }
+
+    },
+
+    socketNotificationReceived: function(notification, payload) {
+
+        if (notification === 'MMM_NEST_STATUS_DATA') {
+            // broadcast Nest data update
+            this.sendNotification('MMM_NEST_STATUS_UPDATE', payload);
+            // process the data
+            this.processNestData(payload);
+            this.scheduleUpdate(this.updateInterval);
+        } else if (notification === 'MMM_NEST_STATUS_DATA_ERROR') {
+            this.errMsg = 'Nest API Error: ' + payload;
+            this.updateDom(this.config.animationSpeed);
+        }
+
     },
 
     processNestData: function(data) {
@@ -688,7 +683,7 @@ Module.register('mmm-nest-status', {
 
         var self = this;
         setTimeout(function() {
-            self.updateNests();
+            self.getData();
         }, nextLoad);
     }
 
