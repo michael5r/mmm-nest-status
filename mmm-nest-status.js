@@ -514,7 +514,7 @@ Module.register('mmm-nest-status', {
             this.sendNotification('MMM_NEST_STATUS_UPDATE', payload);
             // process the data
             this.processNestData(payload);
-            this.scheduleUpdate(this.updateInterval);
+            this.scheduleUpdate(this.config.updateInterval);
         } else if (notification === 'MMM_NEST_STATUS_DATA_ERROR') {
             this.errMsg = 'Nest API Error: ' + payload;
             this.updateDom(this.config.animationSpeed);
