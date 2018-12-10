@@ -1,0 +1,32 @@
+var NodeHelper = require('node_helper');
+var request = require('request');
+
+module.exports = NodeHelper.create({
+
+    start: function() {
+        console.log('Starting node_helper for module [' + this.name + ']');
+    },
+
+    socketNotificationReceived: function(notification, payload) {
+
+        if (notification === 'NEST_STATUS_GET') {
+
+            var token = payload.token;
+            var url = 'https://developer-api.nest.com/?auth=' + token;
+            var self = this;
+
+            request(url, {method: 'GET'}, function(err, res, body) {
+
+                if ((err) || (res.statusCode !== 200)) {
+                    self.sendSocketNotification('NEST_STATUS_DATA_ERROR', err);
+                } else {
+                    var data = JSON.parse(body);
+                    self.sendSocketNotification('NEST_STATUS_DATA', data);
+                }
+
+            });
+
+        }
+    }
+
+});
