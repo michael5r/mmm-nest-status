@@ -495,6 +495,7 @@ Module.register('mmm-nest-status', {
     },
 
     getData: function() {
+
         if (this.config.token === '') {
             this.errMsg = 'Please run getToken.sh and add your Nest API token to the MagicMirror config.js file.';
             this.updateDom(this.config.animationSpeed);
@@ -503,9 +504,11 @@ Module.register('mmm-nest-status', {
                 token: this.config.token
             });
         }
+
     },
 
     socketNotificationReceived: function(notification, payload) {
+
         if (notification === 'MMM_NEST_STATUS_DATA') {
             // broadcast Nest data update
             this.sendNotification('MMM_NEST_STATUS_UPDATE', payload);
@@ -516,6 +519,7 @@ Module.register('mmm-nest-status', {
             this.errMsg = 'Nest API Error: ' + payload;
             this.updateDom(this.config.animationSpeed);
         }
+
     },
 
     processNestData: function(data) {
