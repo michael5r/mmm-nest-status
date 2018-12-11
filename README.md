@@ -47,7 +47,7 @@ If, however, you wish to modify the HTML structure of the thermostats or smoke d
 
 Option               | Type             | Default   | Description
 ---------------------|------------------|-----------|-------------------------------------------------------
-`token`              | `int`            | --------- | **This value is required for this module to work.**
+`token`              | `int`            | -         | **This value is required for this module to work.**
 `displayType`        | `string`         | `grid`    | One of: `grid`, `list`, [`list-id`](#list-view-with-id-thermostat--protect)
 `displayMode`        | `string`         | `all`     | One of: `thermostat`, `protect`, `all`
 `thermostatsToShow`  | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
