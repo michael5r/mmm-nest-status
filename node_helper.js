@@ -17,7 +17,9 @@ module.exports = NodeHelper.create({
 
             request(url, {method: 'GET'}, function(err, res, body) {
 
-                if ((err) || (res.statusCode !== 200)) {
+                if (res.statusCode === 429) {
+                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_BLOCKED', err);
+                } else if ((err) || (res.statusCode !== 200)) {
                     self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', err);
                 } else {
                     if (body === {}) {
