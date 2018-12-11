@@ -53,7 +53,8 @@ Option               | Type             | Default   | Description
 `thermostatsToShow`  | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
 `protectsToShow`     | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
 `units`              | `string`         | config.js | One of: `imperial` (fahrenheit), `metric` (celsius)
-`updateInterval`     | `int`            | '60000'   | Nest recommends updating no more than once pr. minute.
+`updateInterval`     | `int`            | '120000'  | Default is 2 minutes - Nest recommends updating no more than once pr. minute.
+`initialLoadDelay`   | `int`            | '0'       | How long to delay the initial load (in ms)
 
 **Note:** `units` get their default value from the MagicMirror `config.js` file. I'd strongly suggest adding the value in there instead of adding it in this module.
 
@@ -195,6 +196,14 @@ If you don't own this font, this module will just fall back to using the standar
 ### Does this module support touch or mouse interactions? Eg. can I change the temperature of my thermostat using this?
 
 No, right now this module only displays information - it does not allow you to control your Nest devices.
+
+### I'm getting a "Nest API rate limit has been exceeded"-error - what does it mean?
+
+Nest applies data rate limits for accessing their API - if you get this error, it means your account has reached that limit and is now **temporarily** blocked from getting Nest API data. When this happens, the module will automatically try to load data again after **10 minutes**.
+
+There is, unfortunately, nothing you can do about this - you simply have to wait for their block to expire.
+
+You can [read more here](https://developers.nest.com/guides/api/data-rate-limits).
 
 ## Using Handlebars
 

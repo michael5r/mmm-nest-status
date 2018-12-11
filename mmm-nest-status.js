@@ -26,10 +26,10 @@ Module.register('mmm-nest-status', {
         protectDark: false,
         protectShowOk: true,
         units: config.units,
-        updateInterval: 60 * 1000,
+        updateInterval: 120 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '1.2.0'
+        version: '1.3.0'
     },
 
     getScripts: function() {
@@ -57,11 +57,7 @@ Module.register('mmm-nest-status', {
         }
 
         this.errMsg = '';
-
         this.loaded = false;
-
-
-        this.scheduleUpdate(this.config.initialLoadDelay);
 
         this.thermostats = [];
         this.protects = [];
@@ -507,17 +503,81 @@ Module.register('mmm-nest-status', {
 
     },
 
+    notificationReceived(notification, payload, sender) {
+
+        /*
+            In case we have multiple `mmm-nest-status` modules with the same token running, we'll use just one
+            data stream to update all modules.
+        */
+
+        if (notification === 'ALL_MODULES_STARTED') {
+
+            // check if multiple `mmm-nest-status` modules are installed
+            var nestStatusModules = MM.getModules().withClass('mmm-nest-status');
+            var nestStatusModulesNum = nestStatusModules.length;
+
+            var token = this.config.token;
+            var identifier = this.identifier;
+            var tokensMatch = true;
+            var nestTransmitter = false; // whether this is the instance that should transmit data
+
+            if (nestStatusModulesNum > 1) {
+
+                // yep, we have more than one instance
+                // let's see if their tokens match
+                for (i = 0; i < nestStatusModulesNum; i++) {
+
+                    if ((i < 1) && (identifier === nestStatusModules[i].data.identifier)) {
+                        // this is the first instance of this module
+                        nestTransmitter = true;
+                    }
+
+                    if (token !== nestStatusModules[i].config.token) {
+                        // no match on tokens, unfortunately
+                        tokensMatch = false;
+                    }
+
+                }
+
+                if (tokensMatch && nestTransmitter) {
+                    // this is the instance that should be transmitting data
+                    this.scheduleUpdate(this.config.initialLoadDelay);
+                }
+
+            } else {
+                // there is only mmm-nest-status module instance or the tokens didn't
+                // match between instances
+                this.scheduleUpdate(this.config.initialLoadDelay);
+            }
+
+        } else if (notification === 'MMM_NEST_STATUS_UPDATE') {
+            // use the data from another `mmm-nest-status` module
+            this.processNestData(payload);
+        }
+    },
+
     socketNotificationReceived: function(notification, payload) {
+
+        var self = this;
 
         if (notification === 'MMM_NEST_STATUS_DATA') {
             // broadcast Nest data update
-            this.sendNotification('MMM_NEST_STATUS_UPDATE', payload);
+            self.sendNotification('MMM_NEST_STATUS_UPDATE', payload);
             // process the data
-            this.processNestData(payload);
-            this.scheduleUpdate(this.config.updateInterval);
+            self.processNestData(payload);
+            self.scheduleUpdate(self.config.updateInterval);
         } else if (notification === 'MMM_NEST_STATUS_DATA_ERROR') {
-            this.errMsg = 'Nest API Error: ' + payload;
-            this.updateDom(this.config.animationSpeed);
+            self.errMsg = 'Nest API Error: ' + payload;
+            self.updateDom(self.config.animationSpeed);
+        } else if (notification === 'MMM_NEST_STATUS_DATA_BLOCKED') {
+            // this is a specific error that occurs when the Nest API rate limit has been exceeded.
+            // https://developers.nest.com/guides/api/data-rate-limits
+            // we'll try again after 10 minutes
+            setTimeout(function() {
+                self.scheduleUpdate(self.config.updateInterval);
+            }, 10 * 60 * 1000);
+            self.errMsg = 'The Nest API rate limit has been exceeded.<br>This module will try to load data again in 10 minutes.';
+            self.updateDom(self.config.animationSpeed);
         }
 
     },
