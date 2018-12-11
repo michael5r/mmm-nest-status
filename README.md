@@ -54,6 +54,7 @@ Option               | Type             | Default   | Description
 `protectsToShow`     | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
 `units`              | `string`         | config.js | One of: `imperial` (fahrenheit), `metric` (celsius)
 `updateInterval`     | `int`            | '60000'   | Nest recommends updating no more than once pr. minute.
+`initialLoadDelay`   | `int`            | '0'       | How long to delay the initial load (in ms)
 
 **Note:** `units` get their default value from the MagicMirror `config.js` file. I'd strongly suggest adding the value in there instead of adding it in this module.
 

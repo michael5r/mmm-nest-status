@@ -211,6 +211,7 @@
     text-overflow: ellipsis;
     margin: 0;
     padding-bottom: 15px;
+    text-align: center;
 }
 
 .mmm-nest-status .size-large .title {
