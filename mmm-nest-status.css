@@ -729,9 +729,11 @@
     left: 0;
     top: 0;
     box-shadow: 0 0 8px 2px #6b7883;
+    /*
     -webkit-animation: pulseGray 3s ease-in-out 1s infinite;
     -moz-animation: pulseGray 3s ease-in-out 1s infinite;
     animation: pulseGray 3s ease-in-out 1s infinite;
+    */
 }
 
 .mmm-nest-status .protect.green .ring {
@@ -740,9 +742,11 @@
 
 .mmm-nest-status .protect.dark.green .ring {
     box-shadow: 0 0 8px 0px #76e53e;
+    /*
     -webkit-animation-name: pulseGreen;
     -moz-animation-name: pulseGreen;
     animation-name: pulseGreen;
+    */
 }
 
 .mmm-nest-status .protect.yellow .ring {
@@ -751,9 +755,11 @@
 
 .mmm-nest-status .protect.dark.yellow .ring {
     box-shadow: 0 0 8px 0px #ffd400;
+    /*
     -webkit-animation-name: pulseYellow;
     -moz-animation-name: pulseYellow;
     animation-name: pulseYellow;
+    */
 }
 
 .mmm-nest-status .protect.red .ring {
@@ -763,9 +769,11 @@
 
 .mmm-nest-status .protect.dark.red .ring {
     box-shadow: 0 0 8px 2px #f4471e;
+    /*
     -webkit-animation-name: pulseRed;
     -moz-animation-name: pulseRed;
     animation-name: pulseRed;
+    */
 }
 
 .mmm-nest-status .protect .status {
@@ -820,7 +828,9 @@
     background: url('icons/icon-battery.svg');
     margin-top: -5px;
     margin-bottom: 5px;
+    /*
     animation: fadeInOut 1s ease-in-out 1s infinite;
+    */
 }
 
 .mmm-nest-status .protect.size-large .status .icon-battery {
