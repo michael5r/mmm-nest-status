@@ -5,7 +5,7 @@ The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/Magi
 This module displays both your [Nest](https://www.nest.com) thermostats and protect smoke detectors on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
 ![image](https://user-images.githubusercontent.com/3209660/49621016-097fb400-f989-11e8-9fb2-bb824ac41203.png)
-*An example showing multiple thermostats and multiple smoke detectors (using the large size & classic mode for the thermostats, and the small size & dark mode for the protects):*
+*An example showing multiple thermostats and multiple smoke detectors (using the large size & classic mode for the thermostats, and the small size & dark mode for the protects)*
 
 ## Key Features
 - all states for the Nest thermostat (including Eco mode, Away mode, leaf/fan icons, etc) in 2 different designs and 3 sizes
@@ -47,7 +47,7 @@ If, however, you wish to modify the HTML structure of the thermostats or smoke d
 
 Option               | Type             | Default   | Description
 ---------------------|------------------|-----------|-------------------------------------------------------
-`token`              | `int`            | -         | **This value is required for this module to work.**
+`token`              | `string`         | -         | **This value is required for this module to work.**
 `displayType`        | `string`         | `grid`    | One of: `grid`, `list`, [`list-id`](#list-view-with-id-thermostat--protect)
 `displayMode`        | `string`         | `all`     | One of: `thermostat`, `protect`, `all`
 `thermostatsToShow`  | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
