@@ -1,6 +1,7 @@
 # Module: mmm-nest-status
 
-The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/MagicMirror) addon. Please note that this module requires MagicMirror version `2.5` or later.
+The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/MagicMirror) addon.
+Please note that this module requires MagicMirror version `2.5` or later.
 
 This module displays both your [Nest](https://www.nest.com) thermostats and protect smoke detectors on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
