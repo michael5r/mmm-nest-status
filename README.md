@@ -33,7 +33,7 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
         token: "<YOUR_NEST_API_TOKEN>",
         displayType: "grid",
         displayMode: "all",
-        thermostatsToShow: "all',
+        thermostatsToShow: "all",
         // ... and whatever else configuration options you want to use
     }
 },
