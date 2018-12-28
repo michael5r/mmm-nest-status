@@ -1,6 +1,6 @@
 # Module: mmm-nest-status
 
-The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/MagicMirror) addon.
+The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/MagicMirror) addon. Please note that this module requires MagicMirror version `2.5` or later.
 
 This module displays both your [Nest](https://www.nest.com) thermostats and protect smoke detectors on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
@@ -27,13 +27,13 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
 
 ```js
 {
-    module: 'mmm-nest-status',
-    position: 'lower_third', // pick whichever position you want
+    module: "mmm-nest-status",
+    position: "lower_third", // pick whichever position you want
     config: {
-        token: YOUR_NEST_API_TOKEN,
-        displayMode: 'all',
-        displayType: 'all',
-        thermostatsToShow: 'all',
+        token: "<YOUR_NEST_API_TOKEN>",
+        displayType: "grid",
+        displayMode: "all",
+        thermostatsToShow: "all',
         // ... and whatever else configuration options you want to use
     }
 },
