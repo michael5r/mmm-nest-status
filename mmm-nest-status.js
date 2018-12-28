@@ -25,11 +25,13 @@ Module.register('mmm-nest-status', {
         protectSize: 'small',
         protectDark: false,
         protectShowOk: true,
+        motionSleep: false,
+        motionSleepSeconds: 300, // this is in seconds (not ms)
         units: config.units,
         updateInterval: 120 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '1.3.1'
+        version: '1.4.0'
     },
 
     getScripts: function() {
@@ -59,8 +61,12 @@ Module.register('mmm-nest-status', {
         this.errMsg = '';
         this.loaded = false;
 
+        this.sleepTimer = null;
+        this.sleeping = false;
+
         this.thermostats = [];
         this.protects = [];
+        this.nestTransmitter = false;
 
     },
 
@@ -492,13 +498,17 @@ Module.register('mmm-nest-status', {
 
     getData: function() {
 
-        if (this.config.token === '') {
-            this.errMsg = 'Please run getToken.sh and add your Nest API token to the MagicMirror config.js file.';
-            this.updateDom(this.config.animationSpeed);
-        } else {
-            this.sendSocketNotification('MMM_NEST_STATUS_GET', {
-                token: this.config.token
-            });
+        if ((this.motionSleep && !this.sleeping) || (!this.motionSleep)) {
+
+            if (this.config.token === '') {
+                this.errMsg = 'Please run getToken.sh and add your Nest API token to the MagicMirror config.js file.';
+                this.updateDom(this.config.animationSpeed);
+            } else {
+                this.sendSocketNotification('MMM_NEST_STATUS_GET', {
+                    token: this.config.token
+                });
+            }
+
         }
 
     },
@@ -509,6 +519,8 @@ Module.register('mmm-nest-status', {
             In case we have multiple `mmm-nest-status` modules with the same token running, we'll use just one
             data stream to update all modules.
         */
+
+        var self = this;
 
         if (notification === 'ALL_MODULES_STARTED') {
 
@@ -541,18 +553,32 @@ Module.register('mmm-nest-status', {
 
                 if (tokensMatch && nestTransmitter) {
                     // this is the instance that should be transmitting data
+                    this.nestTransmitter = true;
                     this.scheduleUpdate(this.config.initialLoadDelay);
                 }
 
             } else {
                 // there is only mmm-nest-status module instance or the tokens didn't
                 // match between instances
+                this.nestTransmitter = true;
                 this.scheduleUpdate(this.config.initialLoadDelay);
             }
 
         } else if (notification === 'MMM_NEST_STATUS_UPDATE') {
             // use the data from another `mmm-nest-status` module
             this.processNestData(payload);
+
+        } else if ((notification === 'USER_PRESENCE') && (this.config.motionSleep)) {
+            if (payload === true) {
+                if (this.sleeping) {
+                    this.resumeModule();
+                } else {
+                    clearTimeout(self.sleepTimer);
+                    self.sleepTimer = setTimeout(function() {
+                        self.suspendModule()
+                    }, self.config.motionSleepSeconds * 1000);
+                }
+            }
         }
     },
 
@@ -578,6 +604,40 @@ Module.register('mmm-nest-status', {
             }, 10 * 60 * 1000);
             self.errMsg = 'The Nest API rate limit has been exceeded.<br>This module will try to load data again in 10 minutes.';
             self.updateDom(self.config.animationSpeed);
+        }
+
+    },
+
+    suspendModule: function() {
+
+        var self = this;
+
+        this.hide(self.config.animationSpeed, function() {
+            self.sleeping = true;
+        });
+
+    },
+
+    resumeModule: function() {
+
+        var self = this;
+
+        if (this.sleeping) {
+
+            this.sleeping = false;
+
+            // get new data
+            if (this.nestTransmitter) {
+                this.getData();
+            }
+
+            this.show(self.config.animationSpeed, function() {
+                // restart timer
+                clearTimeout(self.sleepTimer);
+                self.sleepTimer = setTimeout(function() {
+                    self.suspendModule()
+                }, self.config.motionSleepSeconds * 1000);
+            });
         }
 
     },

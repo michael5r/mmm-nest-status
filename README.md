@@ -1,6 +1,7 @@
 # Module: mmm-nest-status
 
 The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/MagicMirror) addon.
+Please note that this module requires MagicMirror version `2.5` or later.
 
 This module displays both your [Nest](https://www.nest.com) thermostats and protect smoke detectors on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
@@ -27,13 +28,13 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
 
 ```js
 {
-    module: 'mmm-nest-status',
-    position: 'lower_third', // pick whichever position you want
+    module: "mmm-nest-status",
+    position: "lower_third", // pick whichever position you want
     config: {
-        token: YOUR_NEST_API_TOKEN,
-        displayMode: 'all',
-        displayType: 'all',
-        thermostatsToShow: 'all',
+        token: "<YOUR_NEST_API_TOKEN>",
+        displayType: "grid",
+        displayMode: "all",
+        thermostatsToShow: "all",
         // ... and whatever else configuration options you want to use
     }
 },
@@ -55,6 +56,8 @@ Option               | Type             | Default   | Description
 `units`              | `string`         | config.js | One of: `imperial` (fahrenheit), `metric` (celsius)
 `updateInterval`     | `int`            | `120000`  | Default is 2 minutes - Nest recommends updating no more than once pr. minute.
 `initialLoadDelay`   | `int`            | `0`       | How long to delay the initial load (in ms)
+`motionSleep`        | `boolean`        | `false`   | Suspend module when triggered by [MMM-PIR-Sensor](https://github.com/paviro/MMM-PIR-Sensor)
+`motionSleepSeconds` | `int`            | `300`     | When motion is triggered, how long to wait before going to sleep. Default is 5 minutes.
 
 **Note:** `units` get their default value from the MagicMirror `config.js` file. I'd strongly suggest adding the value in there instead of adding it in this module.
 
@@ -204,6 +207,19 @@ Nest applies data rate limits for accessing their API - if you get this error, i
 There is, unfortunately, nothing you can do about this - you simply have to wait for their block to expire.
 
 You can [read more here](https://developers.nest.com/guides/api/data-rate-limits).
+
+### How does the motionSleep setting work?
+
+Setting the `motionSleep` setting to `true` makes this module continually listen for `USER_PRESENCE` notifications from the [MMM-PIR-Sensor](https://github.com/paviro/MMM-PIR-Sensor) module. Whenever a positive `USER_PRESENCE` notification is received, the module will reset a timer based on your `motionSleepSeconds` setting. When the timer reaches zero, the module will then do two things:
+
+- temporarily stop pulling new data from Nest
+- hide the mmm-nest-status module
+
+You specify how long this timer should last by using the `motionSleepSeconds` setting - please note that this setting is in **seconds** (not ms).
+
+This sleep mode will last till the next positive `USER_PRESENCE` notification is received, at which point the module will resume by immediately pulling new Nest data and then showing the mmm-nest-status module again.
+
+This is a good option to enable if you're using a monitor that shows an ugly "no signal message" when the HDMI signal is lost and you've therefore turned off the `powerSaving` setting in the MMM-Pir-Sensor module.
 
 ## Using Handlebars
 
