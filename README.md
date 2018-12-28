@@ -1,12 +1,13 @@
 # Module: mmm-nest-status
 
 The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/MagicMirror) addon.
-Please note that this module requires MagicMirror version `2.5` or later.
+This module requires MagicMirror version `2.5` or later.
 
 This module displays both your [Nest](https://www.nest.com) thermostats and protect smoke detectors on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
 ![image](https://user-images.githubusercontent.com/3209660/49621016-097fb400-f989-11e8-9fb2-bb824ac41203.png)
 *An example showing multiple thermostats and multiple smoke detectors (using the large size & classic mode for the thermostats, and the small size & dark mode for the protects)*
+
 
 ## Key Features
 - all states for the Nest thermostat (including Eco mode, Away mode, leaf/fan icons, etc) in 2 different designs and 3 sizes
@@ -17,11 +18,39 @@ This module displays both your [Nest](https://www.nest.com) thermostats and prot
 - group the thermostats and protects together, or split them up into stackable containers
 - only re-renders the devices when data has actually changed
 
+
+## Table of Contents
+
+- [Installing the module](#installing-the-module)
+- [Getting the Nest Token](#getting-the-nest-token)
+- [Using the module](#using-the-module)
+- [General Configuration Options](#general-configuration-options)
+- [Configuration Options specific to the Grid view](#configuration-options-specific-to-the-grid-view)
+- [How It Looks](#how-it-looks)
+  * [Grid view: Thermostat (Classic Mode)](#grid-view-thermostat-classic-mode)
+  * [Grid view: Thermostat (Non-Classic Mode)](#grid-view-thermostat-non-classic-mode)
+  * [Grid view: Protect](#grid-view-protect)
+  * [Grid view: Protect (Dark Mode)](#grid-view-protect-dark-mode)
+  * [List view: Thermostat & Protect](#list-view-thermostat--protect)
+  * [List view with ID: Thermostat & Protect](#list-view-with-id-thermostat--protect)
+  * [Minimal View](#minimal-view)
+- [FAQ](#faq)
+  * [How do I use `thermostatsToShow` and `protectsToShow`?](#how-do-i-use-thermostatstoshow-and-protectstoshow)
+  * [I have a humidifier hooked up to my thermostat and on the Nest app, I can see a humidifying icon when it is running. Do you show this too?](#i-have-a-humidifier-hooked-up-to-my-thermostat-and-on-the-nest-app-i-can-see-a-humidifying-icon-when-it-is-running-do-you-show-this-too)
+  * [When I run this module, the fonts look different than your screenshots. Why is that?](#when-i-run-this-module-the-fonts-look-different-than-your-screenshots-why-is-that)
+  * [Does this module support touch or mouse interactions? Eg. can I change the temperature of my thermostat using this?](#does-this-module-support-touch-or-mouse-interactions-eg-can-i-change-the-temperature-of-my-thermostat-using-this)
+  * [I'm getting a "Nest API rate limit has been exceeded"-error - what does it mean?](#im-getting-a-nest-api-rate-limit-has-been-exceeded-error---what-does-it-mean)
+  * [How does the motionSleep setting work?](#how-does-the-motionsleep-setting-work)
+- [Using Handlebars](#using-handlebars)
+
+
 ## Installing the module
 Run `git clone https://github.com/michael5r/mmm-nest-status.git` from inside your `MagicMirror/modules` folder.
 
+
 ## Getting the Nest Token
 Run `getToken.sh` in your terminal. This will walk you through setting up a [Nest Developer Account](https://developers.nest.com) (which is free) and will get you the token you need to allow this module access to the data from your Nest products.
+
 
 ## Using the module
 To use this module, simply add it to the `modules` array in the MagicMirror `config/config.js` file:
@@ -43,6 +72,7 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
 This module uses the excellent [Handlebars](http://handlebarsjs.com) library to serve up precompiled templates for the various designs. If you're just using this module **as is**, you don't need to do anything - this module already comes with all the templates you need.
 
 If, however, you wish to modify the HTML structure of the thermostats or smoke detectors, read the [Using Handlebars](#using-handlebars) guide at the bottom of this page.
+
 
 ## General Configuration Options
 
@@ -220,6 +250,7 @@ You specify how long this timer should last by using the `motionSleepSeconds` se
 This sleep mode will last till the next positive `USER_PRESENCE` notification is received, at which point the module will resume by immediately pulling new Nest data and then showing the mmm-nest-status module again.
 
 This is a good option to enable if you're using a monitor that shows an ugly "no signal message" when the HDMI signal is lost and you've therefore turned off the `powerSaving` setting in the MMM-Pir-Sensor module.
+
 
 ## Using Handlebars
 

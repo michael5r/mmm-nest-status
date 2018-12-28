@@ -31,7 +31,7 @@ Module.register('mmm-nest-status', {
         updateInterval: 120 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '1.4.0'
+        version: '1.4.1'
     },
 
     getScripts: function() {
@@ -498,7 +498,7 @@ Module.register('mmm-nest-status', {
 
     getData: function() {
 
-        if ((this.motionSleep && !this.sleeping) || (!this.motionSleep)) {
+        if (!this.sleeping) {
 
             if (this.config.token === '') {
                 this.errMsg = 'Please run getToken.sh and add your Nest API token to the MagicMirror config.js file.';
@@ -569,16 +569,30 @@ Module.register('mmm-nest-status', {
             this.processNestData(payload);
 
         } else if ((notification === 'USER_PRESENCE') && (this.config.motionSleep)) {
+
             if (payload === true) {
                 if (this.sleeping) {
-                    this.resumeModule();
+                    this.show(this.config.animationSpeed);
                 } else {
-                    clearTimeout(self.sleepTimer);
-                    self.sleepTimer = setTimeout(function() {
-                        self.suspendModule()
+                    clearTimeout(this.sleepTimer);
+                    this.sleepTimer = setTimeout(function() {
+                        self.hide(self.config.animationSpeed);
                     }, self.config.motionSleepSeconds * 1000);
                 }
             }
+
+        } else if (notification === 'MMM_ENERGY_SAVER') {
+
+            if (payload === 'suspend') {
+                if (!this.sleeping) {
+                    this.hide(this.config.animationSpeed);
+                }
+            } else if (payload === 'resume') {
+                if (this.sleeping) {
+                    this.show(this.config.animationSpeed);
+                }
+            }
+
         }
     },
 
@@ -608,17 +622,15 @@ Module.register('mmm-nest-status', {
 
     },
 
-    suspendModule: function() {
+    suspend: function() {
+        // this method is triggered when a module is hidden using this.hide()
 
-        var self = this;
-
-        this.hide(self.config.animationSpeed, function() {
-            self.sleeping = true;
-        });
+        this.sleeping = true;
 
     },
 
-    resumeModule: function() {
+    resume: function() {
+        // this method is triggered when a module is shown using this.show()
 
         var self = this;
 
@@ -631,13 +643,13 @@ Module.register('mmm-nest-status', {
                 this.getData();
             }
 
-            this.show(self.config.animationSpeed, function() {
-                // restart timer
-                clearTimeout(self.sleepTimer);
-                self.sleepTimer = setTimeout(function() {
-                    self.suspendModule()
+            // restart timer
+            if (this.config.motionSleep) {
+                clearTimeout(this.sleepTimer);
+                this.sleepTimer = setTimeout(function() {
+                    self.hide(self.config.animationSpeed);
                 }, self.config.motionSleepSeconds * 1000);
-            });
+            }
         }
 
     },
