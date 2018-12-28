@@ -31,7 +31,7 @@ Module.register('mmm-nest-status', {
         updateInterval: 120 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '1.4.1'
+        version: '1.4.2'
     },
 
     getScripts: function() {
@@ -578,18 +578,6 @@ Module.register('mmm-nest-status', {
                     this.sleepTimer = setTimeout(function() {
                         self.hide(self.config.animationSpeed);
                     }, self.config.motionSleepSeconds * 1000);
-                }
-            }
-
-        } else if (notification === 'MMM_ENERGY_SAVER') {
-
-            if (payload === 'suspend') {
-                if (!this.sleeping) {
-                    this.hide(this.config.animationSpeed);
-                }
-            } else if (payload === 'resume') {
-                if (this.sleeping) {
-                    this.show(this.config.animationSpeed);
                 }
             }
 
