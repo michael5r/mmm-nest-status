@@ -31,7 +31,7 @@ Module.register('mmm-nest-status', {
         updateInterval: 120 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '1.4.2'
+        version: '1.4.3'
     },
 
     getScripts: function() {

@@ -1,5 +1,12 @@
 # Module: mmm-nest-status
 
+## Important Note About the Nest API
+Due to Google closing down the `Works with Nest`-program, the only people who can currently use this module are the ones that already have a non-migrated Nest API account (there is no way to create a new Nest API account anymore).
+
+When Google launches their [`Device Access`](https://developers.google.com/nest/device-access) program in 2020, I'll hopefully be able to update this module to use that API instead, but right now there's nothing I can do about this, unfortunately.
+
+## About This Module
+
 The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/MagicMirror) addon.
 This module requires MagicMirror version `2.5` or later.
 
@@ -22,7 +29,6 @@ This module displays both your [Nest](https://www.nest.com) thermostats and prot
 ## Table of Contents
 
 - [Installing the module](#installing-the-module)
-- [Getting the Nest Token](#getting-the-nest-token)
 - [Using the module](#using-the-module)
 - [General Configuration Options](#general-configuration-options)
 - [Configuration Options specific to the Grid view](#configuration-options-specific-to-the-grid-view)
@@ -46,10 +52,6 @@ This module displays both your [Nest](https://www.nest.com) thermostats and prot
 
 ## Installing the module
 Run `git clone https://github.com/michael5r/mmm-nest-status.git` from inside your `MagicMirror/modules` folder.
-
-
-## Getting the Nest Token
-Run `getToken.sh` in your terminal. This will walk you through setting up a [Nest Developer Account](https://developers.nest.com) (which is free) and will get you the token you need to allow this module access to the data from your Nest products.
 
 
 ## Using the module
