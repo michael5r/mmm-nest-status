@@ -1,9 +1,11 @@
 # Module: mmm-nest-status
 
-## About the API
-Please note that v2.x of this module *only* supports the Google Device Access API.
+## A note about migrating from v1 to v2
+Please note that v2.x of this module **only** supports the [Google Device Access API](https://developers.google.com/nest/device-access).
 
 If you still have an old Nest developer account, you'll need to either migrate it to Google or use the [`1.4.3`](https://github.com/michael5r/mmm-nest-status/tree/1.4.3) version of this module.
+
+Previous versions of this module were able to display Nest Protects as well as the thermostats - unfortunately, Google Device Access does not currently give you access to Nest Protects, so this functionality has (hopefully temporarily) been removed.
 
 ## About This Module
 
@@ -12,8 +14,8 @@ This module requires MagicMirror version `2.5` or later.
 
 This module displays your [Nest](https://www.nest.com) thermostats on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
-![image](https://user-images.githubusercontent.com/3209660/49621016-097fb400-f989-11e8-9fb2-bb824ac41203.png)
-*An example showing multiple thermostats and multiple smoke detectors (using the large size & classic mode for the thermostats, and the small size & dark mode for the protects)*
+![image](https://user-images.githubusercontent.com/3209660/144278339-5906821c-69b0-4159-bb84-5aa694f8507c.png)
+*An example showing multiple thermostats (using the large size & classic mode)*
 
 
 ## Key Features
@@ -30,20 +32,19 @@ This module displays your [Nest](https://www.nest.com) thermostats on your Magic
 - [Using the module](#using-the-module)
 - [General Configuration Options](#general-configuration-options)
 - [Configuration Options specific to the Grid view](#configuration-options-specific-to-the-grid-view)
+- [How To Get the Access Tokens](#how-to-get-the-access-tokens)
 - [How It Looks](#how-it-looks)
-  * [Grid view: Thermostat (Classic Mode)](#grid-view-thermostat-classic-mode)
-  * [Grid view: Thermostat (Non-Classic Mode)](#grid-view-thermostat-non-classic-mode)
-  * [Grid view: Protect](#grid-view-protect)
-  * [Grid view: Protect (Dark Mode)](#grid-view-protect-dark-mode)
-  * [List view: Thermostat & Protect](#list-view-thermostat--protect)
-  * [List view with ID: Thermostat & Protect](#list-view-with-id-thermostat--protect)
+  * [Grid view (Classic Mode)](#grid-view-classic-mode)
+  * [Grid view (Non-Classic Mode)](#grid-view-non-classic-mode)
+  * [List view](#list-view)
+  * [List view with ID](#list-view-with-id)
   * [Minimal View](#minimal-view)
 - [FAQ](#faq)
-  * [How do I use `thermostatsToShow` and `protectsToShow`?](#how-do-i-use-thermostatstoshow-and-protectstoshow)
+  * [How do I use `thermostatsToShow`?](#how-do-i-use-thermostatstoshow)
   * [I have a humidifier hooked up to my thermostat and on the Nest app, I can see a humidifying icon when it is running. Do you show this too?](#i-have-a-humidifier-hooked-up-to-my-thermostat-and-on-the-nest-app-i-can-see-a-humidifying-icon-when-it-is-running-do-you-show-this-too)
   * [When I run this module, the fonts look different than your screenshots. Why is that?](#when-i-run-this-module-the-fonts-look-different-than-your-screenshots-why-is-that)
   * [Does this module support touch or mouse interactions? Eg. can I change the temperature of my thermostat using this?](#does-this-module-support-touch-or-mouse-interactions-eg-can-i-change-the-temperature-of-my-thermostat-using-this)
-  * [I'm getting a "Nest API rate limit has been exceeded"-error - what does it mean?](#im-getting-a-nest-api-rate-limit-has-been-exceeded-error---what-does-it-mean)
+  * [I'm getting a "Device Access API rate limit has been exceeded"-error - what does it mean?](#im-getting-a-device-access-api-rate-limit-has-been-exceeded-error---what-does-it-mean)
   * [How does the motionSleep setting work?](#how-does-the-motionsleep-setting-work)
 - [Using Handlebars](#using-handlebars)
 
@@ -60,7 +61,10 @@ To use this module, simply add it to the `modules` array in the MagicMirror `con
     module: "mmm-nest-status",
     position: "lower_third", // pick whichever position you want
     config: {
-        token: "<YOUR_NEST_API_TOKEN>",
+        clientId: "<YOUR_DEVICE_ACCESS_CLIENT_ID>",
+        clientSecret: "<YOUR_DEVICE_ACCESS_CLIENT_SECRET>",
+        refreshToken: "<YOUR_DEVICE_ACCESS_REFRESH_TOKEN>",
+        projectId: "<YOUR_DEVICE_ACCESS_PROJECT_ID>",
         displayType: "grid",
         displayMode: "all",
         thermostatsToShow: "all",
@@ -78,11 +82,12 @@ If, however, you wish to modify the HTML structure of the thermostats or smoke d
 
 Option               | Type             | Default   | Description
 ---------------------|------------------|-----------|-------------------------------------------------------
-`token`              | `string`         | -         | **This value is required for this module to work.**
+`clientId`           | `string`         | -         | **This value is required for this module to work.**
+`clientSecret`       | `string`         | -         | **This value is required for this module to work.**
+`refreshToken`       | `string`         | -         | **This value is required for this module to work.**
+`projectId`          | `string`         | -         | **This value is required for this module to work.**
 `displayType`        | `string`         | `grid`    | One of: `grid`, `list`, [`list-id`](#list-view-with-id-thermostat--protect)
-`displayMode`        | `string`         | `all`     | One of: `thermostat`, `protect`, `all`
 `thermostatsToShow`  | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
-`protectsToShow`     | `string`,`array` | `all`     | One of: `all`, `first`, or an `array` with [device IDs](#list-view-with-id-thermostat--protect)
 `units`              | `string`         | config.js | One of: `imperial` (fahrenheit), `metric` (celsius)
 `updateInterval`     | `int`            | `120000`  | Default is 2 minutes - Nest recommends updating no more than once pr. minute.
 `initialLoadDelay`   | `int`            | `0`       | How long to delay the initial load (in ms)
@@ -100,17 +105,26 @@ Option               | Type             | Default   | Description
 ---------------------|------------------|-----------|-------------------------------------------------------
 `showNames`          | `boolean`        | `true`    | Displays the device name above the device
 `alignment`          | `string`         | `center`  | One of: `left`, `center`, `right`
-`groupTogether`      | `boolean`        | `false`   | Whether thermostats and protects share the same box
 `thermostatSize`     | `string`         | `large`   | One of: `small`, `medium`, `large`
 `thermostatClassic`  | `boolean`        | `true`    | [Classic view](#grid-view-thermostat-classic-mode) of the thermostat
-`protectSize`        | `string`         | 'small'   | One of: `small`, `medium`, `large`
-`protectDark`        | `boolean`        | 'false'   | Switches protects to use the [dark design](#grid-view-protect-dark-mode)
-`protectShowOk`      | `boolean`        | 'true'    | Shows the text `ok` in a protect when everything is ok.
+
+
+## How To Get the Access Tokens
+
+Compared to the old Nest developer API, working with Google Device Access to get your access tokens is, well, to put it mildly, a fair bit more cumbersome.
+
+In order for this module to work, you'll need 4 things:
+- Google Cloud Platform OAuth 2.0 Client ID
+- Google Cloud Platform OAuth 2.0 Client Secret
+- Device Access Project ID
+- Device Access Refresh Token
+
+I've put together a document that tells you how to do this - you can find it here.
 
 
 ## How It Looks
 
-### Grid view: Thermostat (Classic Mode)
+### Grid view (Classic Mode)
 
 #### Large Size
 
@@ -126,7 +140,7 @@ With `showNames` set to `false`.
 
 ![image](https://user-images.githubusercontent.com/3209660/49628314-18765e80-f9a9-11e8-9f59-afe82964d7e7.png)
 
-### Grid view: Thermostat (Non-Classic Mode)
+### Grid view (Non-Classic Mode)
 
 The non-classic view is a bit more abstract and doesn't include quite as detailed information as the `classic` mode.
 
@@ -144,81 +158,50 @@ With `showNames` set to `false`.
 
 ![image](https://user-images.githubusercontent.com/3209660/49628480-e9142180-f9a9-11e8-83d5-9d7a1cb6585e.png)
 
-### Grid view: Protect
-
-I'm not showing screenshots of the large size, but just imagine they're the same as the `medium` size below just ... well ... larger.
-
-#### Medium Size
-
-![image](https://user-images.githubusercontent.com/3209660/49628193-5aeb6b80-f9a8-11e8-8974-fae75973e25d.png)
-
-Thermostats and protects with the same size parameter line up nicely next to each other if `groupTogether` is set to `true`.
-
-![image](https://user-images.githubusercontent.com/3209660/49628019-83bf3100-f9a7-11e8-8bce-9d34dcb1e8fe.png)
-
-#### Small Size
-
-![image](https://user-images.githubusercontent.com/3209660/49626681-a863da80-f9a0-11e8-9795-27518bcb83b2.png)
-
-
-### Grid view: Protect (Dark Mode)
-
-#### Medium Size
-
-![image](https://user-images.githubusercontent.com/3209660/49628212-82dacf00-f9a8-11e8-80e9-8fb472ef6ae0.png)
-
-Lined up with thermostats that have `thermostatClassic` set to `false`:
-
-![image](https://user-images.githubusercontent.com/3209660/49628674-30e77880-f9ab-11e8-802a-c7f0460982ac.png)
-
-#### Small Size
-
-![image](https://user-images.githubusercontent.com/3209660/49626750-d6e1b580-f9a0-11e8-9927-40f260883ef5.png)
-
-### List view: Thermostat & Protect
+### List view
 
 If you prefer just looking at text, set the `displayType` to `list`:
 
-![image](https://user-images.githubusercontent.com/3209660/49421197-7a8a5600-f754-11e8-9b07-02a1e9f6e6f7.png)
+![image](https://user-images.githubusercontent.com/3209660/144283585-9d34d2ee-709b-45f7-8eac-0a30e111a858.png)
 
 All states show up in the list view as well:
 
-![image](https://user-images.githubusercontent.com/3209660/49421535-fe910d80-f755-11e8-8493-b17a398be953.png)
+![image](https://user-images.githubusercontent.com/3209660/144283616-065d9925-c6cc-4fa7-82c8-dbc5c6464993.png)
 
-### List view with ID: Thermostat & Protect
+### List view with ID
 
 If the `displayType` is set to `list-id`, you get the list view but with IDs in front of every device:
 
-![image](https://user-images.githubusercontent.com/3209660/49421591-30a26f80-f756-11e8-8390-14cd520fca7c.png)
+![image](https://user-images.githubusercontent.com/3209660/144283836-21d99689-aac7-4b27-9485-028b63dfd41c.png)
 
 You can use these IDs to specify which devices to show in `thermostatsToShow` and `protectsToShow`.
 
 ### Minimal View
 
-For a very minimal & clean look, set `thermostatClassic` to `false`, `showNames` to `false` and `protectDark` to `true`.
+For a very minimal & clean look, set `thermostatClassic` to `false` and `showNames` to `false`.
 
-![image](https://user-images.githubusercontent.com/3209660/49628601-b61e5d80-f9aa-11e8-8c26-1d810918f8a0.png)
+![image](https://user-images.githubusercontent.com/3209660/144284023-2f247757-af30-47c9-95b1-b95189487cbe.png)
 
 
 ## FAQ
 
-### How do I use `thermostatsToShow` and `protectsToShow`?
+### How do I use `thermostatsToShow`?
 
-It's simple - both of these configurations take the following values:
-- `all`: This is the default, it means that all thermostats or all protects will be displayed.
-- `first`: Setting this value means that only the first thermostat and the first protect in the list will be displayed.
+It's simple - this configuration takes the following values:
+- `all`: This is the default, it means that all thermostats will be displayed.
+- `first`: Setting this value means that only the first thermostat in the list will be displayed.
 - `array`: Each device has an ID (which can be seen by setting `displayType` to `list-id`), so by adding these IDs to an array, you can select exactly which devices you want to display.
 
 In `config.js`:
 ```js
-protectsToShow: [0,1,2,3,8],
+thermostatsToShow: [0,1,3],
 ```
 
-This results in only the 5 protects above being displayed.
+This results in only the 3 thermostats above being displayed.
 
 ### I have a humidifier hooked up to my thermostat and on the Nest app, I can see a humidifying icon when it is running. Do you show this too?
 
-No, unfortunately not - there's currently no way to get this information from the Nest API. It only tells me that a fan is running, but doesn't distinguish between a fan and a humidifier.
+No, unfortunately not - there's currently no way to get this information from the Device Acccess API. It only tells me that a fan is running, but doesn't distinguish between a fan and a humidifier.
 
 ### When I run this module, the fonts look different than your screenshots. Why is that?
 
@@ -230,13 +213,11 @@ If you don't own this font, this module will just fall back to using the standar
 
 No, right now this module only displays information - it does not allow you to control your Nest devices.
 
-### I'm getting a "Nest API rate limit has been exceeded"-error - what does it mean?
+### I'm getting a "Device Access API rate limit has been exceeded"-error - what does it mean?
 
-Nest applies data rate limits for accessing their API - if you get this error, it means your account has reached that limit and is now **temporarily** blocked from getting Nest API data. When this happens, the module will automatically try to load data again after **10 minutes**.
+Google applies data rate limits for accessing their API - if you get this error, it means your account has reached that limit and is now **temporarily** blocked from getting Device Access API data. When this happens, the module will automatically try to load data again after **10 minutes**.
 
 There is, unfortunately, nothing you can do about this - you simply have to wait for their block to expire.
-
-You can [read more here](https://developers.nest.com/guides/api/data-rate-limits).
 
 ### How does the motionSleep setting work?
 
