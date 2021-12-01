@@ -1,16 +1,16 @@
 # Module: mmm-nest-status
 
-## Important Note About the Nest API
-Due to Google closing down the `Works with Nest`-program, the only people who can currently use this module are the ones that already have a non-migrated Nest API account (there is no way to create a new Nest API account anymore).
+## About the API
+Please note that v2.x of this module *only* supports the Google Device Access API.
 
-When Google launches their [`Device Access`](https://developers.google.com/nest/device-access) program in 2020, I'll hopefully be able to update this module to use that API instead, but right now there's nothing I can do about this, unfortunately.
+If you still have an old Nest developer account, you'll need to either migrate it to Google or use the [`1.4.3`](https://github.com/michael5r/mmm-nest-status/tree/1.4.3) version of this module.
 
 ## About This Module
 
 The `mmm-nest-status` module is a [MagicMirror](https://github.com/MichMich/MagicMirror) addon.
 This module requires MagicMirror version `2.5` or later.
 
-This module displays both your [Nest](https://www.nest.com) thermostats and protect smoke detectors on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
+This module displays your [Nest](https://www.nest.com) thermostats on your Magic Mirror and supports multiple modes to get you exactly the views that you want.
 
 ![image](https://user-images.githubusercontent.com/3209660/49621016-097fb400-f989-11e8-9fb2-bb824ac41203.png)
 *An example showing multiple thermostats and multiple smoke detectors (using the large size & classic mode for the thermostats, and the small size & dark mode for the protects)*
@@ -18,11 +18,9 @@ This module displays both your [Nest](https://www.nest.com) thermostats and prot
 
 ## Key Features
 - all states for the Nest thermostat (including Eco mode, Away mode, leaf/fan icons, etc) in 2 different designs and 3 sizes
-- all states for the Nest protect in 2 different designs and 3 sizes
 - 2 different modes - `grid` and `list` - allows you to easily customize your display
-- choose to display all of your thermostats/protects, or pick & choose which devices to show
-- choose to display the name of the thermostat/protect for easy identification
-- group the thermostats and protects together, or split them up into stackable containers
+- choose to display all of your thermostats, or pick & choose which devices to show
+- choose to display the name of the thermostat for easy identification
 - only re-renders the devices when data has actually changed
 
 
