@@ -12,7 +12,11 @@
 Module.register('mmm-nest-status', {
 
     defaults: {
-        token: '',
+        clientId: '',
+        clientSecret: '',
+        refreshToken: '',
+        projectId: '',
+        tokenData: {},
         displayType: 'grid',
         displayMode: 'all',
         showNames: true,
@@ -31,7 +35,7 @@ Module.register('mmm-nest-status', {
         updateInterval: 120 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '1.4.3'
+        version: '2.0.0'
     },
 
     getScripts: function() {
@@ -233,7 +237,7 @@ Module.register('mmm-nest-status', {
         }
 
         if (t.isHeatCoolMode) {
-            targetTemp = t.targetTempLow + '<small class="dot">&bull;</small>' + t.targetTempHigh;
+            targetTemp = t.targetTempHeat + '<small class="dot">&bull;</small>' + t.targetTempCool;
         } else if (t.isEcoMode) {
             targetTemp = 'ECO';
         } else if (t.isOffMode) {
@@ -247,9 +251,9 @@ Module.register('mmm-nest-status', {
             if (t.isHeating || t.isCooling) {
                 showTempStatus = true;
                 tempStatusText = (t.isHeating) ? 'HEATING' : 'COOLING';
-            } else if ((t.hvacMode === 'heat') || (t.hvacMode === 'cool')) {
+            } else if ((t.thermostatMode === 'heat') || (t.thermostatMode === 'cool')) {
                 showTempStatus = true;
-                tempStatusText = (t.hvacMode === 'heat') ? 'HEAT SET TO' : 'COOL SET TO';
+                tempStatusText = (t.thermostatMode === 'heat') ? 'HEAT SET TO' : 'COOL SET TO';
             }
         }
 
@@ -261,12 +265,11 @@ Module.register('mmm-nest-status', {
                 temperatureScale: (units === 'imperial') ? 'F' : 'C',
                 hasLeaf: !t.fanOn && t.leafOn,
                 targetTemp: t.targetTemp,
-                targetTempLow: t.targetTempLow,
-                targetTempHigh: t.targetTempHigh,
+                targetTempCool: t.targetTempCool,
+                targetTempHeat: t.targetTempHeat,
                 ambientTemp: t.ambientTemp,
                 ecoTempLow: t.ecoTempLow,
                 ecoTempHigh: t.ecoTempHigh,
-                isAwayMode: this.awayState === 'away',
                 isEcoMode: t.isEcoMode,
                 isOffMode: t.isOffMode,
                 isHeatCoolMode: t.isHeatCoolMode
@@ -278,10 +281,11 @@ Module.register('mmm-nest-status', {
 
         var classes = this.classNames(
             'thermostat',
-            t.hvacState !== 'off' ? t.hvacState : false,
+            t.thermostatHvac !== 'off' ? t.thermostatHvac : false,
             'size-' + thermostatSize,
-            t.hvacMode,
-            isClassic ? 'classic' : false
+            t.thermostatMode,
+            isClassic ? 'classic' : false,
+            t.isEcoMode ? 'eco': false
         );
 
         var statusClasses = this.classNames(
@@ -465,7 +469,7 @@ Module.register('mmm-nest-status', {
             }
 
             if (item.isHeatCoolMode) {
-                c3Text = item.targetTempLow + '&deg &bull; ' + item.targetTempHigh + '&deg;';
+                c3Text = item.targetTempHeat + '&deg &bull; ' + item.targetTempCool + '&deg;';
             } else if (item.isEcoMode) {
                 c3Text = item.ecoTempLow + '&deg &bull; ' + item.ecoTempHigh + '&deg;';
             }
@@ -500,12 +504,16 @@ Module.register('mmm-nest-status', {
 
         if (!this.sleeping) {
 
-            if (this.config.token === '') {
-                this.errMsg = 'Please run getToken.sh and add your Nest API token to the MagicMirror config.js file.';
+            if ((this.config.clientId === '') || (this.config.clientSecret === '') || (this.config.refreshToken === '') || (this.config.projectId === '')) {
+                this.errMsg = 'Please add your Google Device Access client ID, client secret, refresh token and project ID to the MagicMirror config.js file.';
                 this.updateDom(this.config.animationSpeed);
             } else {
                 this.sendSocketNotification('MMM_NEST_STATUS_GET', {
-                    token: this.config.token
+                    clientId: this.config.clientId,
+                    clientSecret: this.config.clientSecret,
+                    refreshToken: this.config.refreshToken,
+                    projectId: this.config.projectId,
+                    tokenData: this.config.tokenData
                 });
             }
 
@@ -516,7 +524,7 @@ Module.register('mmm-nest-status', {
     notificationReceived(notification, payload, sender) {
 
         /*
-            In case we have multiple `mmm-nest-status` modules with the same token running, we'll use just one
+            In case we have multiple `mmm-nest-status` modules with the same refreshToken running, we'll use just one
             data stream to update all modules.
         */
 
@@ -528,15 +536,15 @@ Module.register('mmm-nest-status', {
             var nestStatusModules = MM.getModules().withClass('mmm-nest-status');
             var nestStatusModulesNum = nestStatusModules.length;
 
-            var token = this.config.token;
+            var refreshToken = this.config.refreshToken;
             var identifier = this.identifier;
-            var tokensMatch = true;
+            var refreshTokensMatch = true;
             var nestTransmitter = false; // whether this is the instance that should transmit data
 
             if (nestStatusModulesNum > 1) {
 
                 // yep, we have more than one instance
-                // let's see if their tokens match
+                // let's see if their refreshTokens match
                 for (i = 0; i < nestStatusModulesNum; i++) {
 
                     if ((i < 1) && (identifier === nestStatusModules[i].data.identifier)) {
@@ -544,21 +552,21 @@ Module.register('mmm-nest-status', {
                         nestTransmitter = true;
                     }
 
-                    if (token !== nestStatusModules[i].config.token) {
-                        // no match on tokens, unfortunately
-                        tokensMatch = false;
+                    if (refreshToken !== nestStatusModules[i].config.refreshToken) {
+                        // no match on refreshTokens, unfortunately
+                        refreshTokensMatch = false;
                     }
 
                 }
 
-                if (tokensMatch && nestTransmitter) {
+                if (refreshTokensMatch && nestTransmitter) {
                     // this is the instance that should be transmitting data
                     this.nestTransmitter = true;
                     this.scheduleUpdate(this.config.initialLoadDelay);
                 }
 
             } else {
-                // there is only mmm-nest-status module instance or the tokens didn't
+                // there is only mmm-nest-status module instance or the refreshTokens didn't
                 // match between instances
                 this.nestTransmitter = true;
                 this.scheduleUpdate(this.config.initialLoadDelay);
@@ -592,19 +600,30 @@ Module.register('mmm-nest-status', {
             // broadcast Nest data update
             self.sendNotification('MMM_NEST_STATUS_UPDATE', payload);
             // process the data
+            self.config.tokenData = payload.tokenData;
             self.processNestData(payload);
             self.scheduleUpdate(self.config.updateInterval);
+        } else if (notification === 'MMM_NEST_STATUS_ACCESS_EXPIRED') {
+            // the access token has expired
+            // so we get the data again, but this time we add the old token data
+            self.sendSocketNotification('MMM_NEST_STATUS_GET', {
+                clientId: this.config.clientId,
+                clientSecret: this.config.clientSecret,
+                refreshToken: this.config.refreshToken,
+                projectId: this.config.projectId,
+                tokenData: payload
+            });
         } else if (notification === 'MMM_NEST_STATUS_DATA_ERROR') {
             self.errMsg = 'Nest API Error: ' + payload;
             self.updateDom(self.config.animationSpeed);
         } else if (notification === 'MMM_NEST_STATUS_DATA_BLOCKED') {
-            // this is a specific error that occurs when the Nest API rate limit has been exceeded.
-            // https://developers.nest.com/guides/api/data-rate-limits
+            // this is a specific error that occurs when the API rate limit has been exceeded.
+            // https://developers.google.com/nest/device-access/reference/errors/api
             // we'll try again after 10 minutes
             setTimeout(function() {
                 self.scheduleUpdate(self.config.updateInterval);
             }, 10 * 60 * 1000);
-            self.errMsg = 'The Nest API rate limit has been exceeded.<br>This module will try to load data again in 10 minutes.';
+            self.errMsg = 'The Device Access API rate limit has been exceeded.<br>This module will try to load data again in 10 minutes.';
             self.updateDom(self.config.animationSpeed);
         }
 
@@ -646,17 +665,26 @@ Module.register('mmm-nest-status', {
 
         var renderUi = true;
         var thermostats = [];
-        var protects = [];
-        var awayState = 'unknown'; // 'home', 'away'
+        var protects = [];  // the Device Access API doesn't currently support Nest Protects :(
 
-        var numberOfThermostats = (data.devices && data.devices.thermostats) ? Object.keys(data.devices.thermostats).length : 0;
-        var numberOfProtects = (data.devices && data.devices.smoke_co_alarms) ? Object.keys(data.devices.smoke_co_alarms).length : 0;
+        var devices = data.devices;
+        var devicesThermostats = [];
+        var devicesProtects = [];
+        var thermostatType = 'sdm.devices.types.THERMOSTAT';
+        var protectType = 'sdm.devices.types.PROTECT'; // hoping this actually gets added at some point
 
-        // check for away state
-        if (data.devices && data.structures) {
-            var sId = Object.keys(data.structures)[0];
-            var sObj = data.structures[sId];
-            awayState = sObj.away;
+        var numberOfThermostats = 0;
+        var numberOfProtects = 0;
+
+        for (var d = 0; d < devices.length; d++) {
+            var device = devices[d];
+            if (device.type === thermostatType) {
+                numberOfThermostats++;
+                devicesThermostats.push(device);
+            } else if (device.type === protectType) {
+                numberOfProtects++;
+                devicesProtects.push(device);
+            }
         }
 
         var displayMode = this.config.displayMode;
@@ -664,29 +692,90 @@ Module.register('mmm-nest-status', {
 
         if ((displayMode !== 'protect') && (numberOfThermostats > 0)) {
 
-            for (i = 0; i < numberOfThermostats; i++) {
+            for (var i = 0; i < numberOfThermostats; i++) {
 
-                var tId = Object.keys(data.devices.thermostats)[i];
-                var tObj = data.devices.thermostats[tId];
+                var tObj = devicesThermostats[i];
+                var tObjTraits = tObj.traits;
+                var tObjParent = tObj.parentRelations;
+
+                // device name
+                var thermostatName = 'Nest Thermostat';
+                if (tObjTraits['sdm.devices.traits.Info'].customName && (tObjTraits['sdm.devices.traits.Info'].customName.length > 0)) {
+                    // use the custom name
+                    thermostatName = tObjTraits['sdm.devices.traits.Info'].customName;
+                } else if (tObjParent && tObjParent[0] && tObjParent[0].displayName) {
+                    // use the parent display name
+                    thermostatName = tObjParent[0].displayName;
+                }
+
+                // humidity settings
+                var humiditySettings = tObjTraits['sdm.devices.traits.Humidity'];
+                var humidity = humiditySettings && humiditySettings.ambientHumidityPercent ? humiditySettings.ambientHumidityPercent : 'na';
+
+                // fan settings
+                var fanSettings = tObjTraits['sdm.devices.traits.Fan'];
+                var fanOn = fanSettings && fanSettings.timerMode === 'ON';
+
+                // eco settings
+                var ecoSettings = tObjTraits['sdm.devices.traits.ThermostatEco'];
+                var leafOn = false;
+                var ecoTempLow = 0;
+                var ecoTempHigh = 0;
+
+                if (ecoSettings) {
+                    leafOn = ecoSettings.mode === 'MANUAL_ECO';
+                    ecoTempLow = this.normalizeTemp(units, ecoSettings.coolCelsius);
+                    ecoTempHigh = this.normalizeTemp(units, ecoSettings.heatCelsius);
+                }
+
+                // thermostat mode settings
+                var thermostatModeSettings = tObjTraits['sdm.devices.traits.ThermostatMode'];
+                var thermostatMode = thermostatModeSettings.mode.toLowerCase();
+
+                // thermostat hvac settings
+                var thermostatHvacSettings = tObjTraits['sdm.devices.traits.ThermostatHvac'];
+                var thermostatHvac = thermostatHvacSettings.status.toLowerCase();
+
+                // target high/low temperature settings
+                var targetTemperatureSettings = tObjTraits['sdm.devices.traits.ThermostatTemperatureSetpoint'];
+                var targetTempCool = 0; // Target temperature in Celsius for thermostat COOL and HEATCOOL modes.
+                var targetTempHeat = 0; // Target temperature in Celsius for thermostat HEAT and HEATCOOL modes.
+
+                if (targetTemperatureSettings) {
+                    targetTempCool = this.normalizeTemp(units, targetTemperatureSettings.coolCelsius);
+                    targetTempHeat = this.normalizeTemp(units, targetTemperatureSettings.heatCelsius);
+                }
+
+                // target temperature setting
+                var targetTemp = 0;
+                if (thermostatMode === 'heat') {
+                    targetTemp = targetTempHeat;
+                } else if (thermostatMode === 'cool') {
+                    targetTemp = targetTempCool;
+                }
+
+                // ambient temperature settings
+                var temperatureSettings = tObjTraits['sdm.devices.traits.Temperature'];
+                var ambientTemp = this.normalizeTemp(units, temperatureSettings.ambientTemperatureCelsius);
 
                 var thermostat = {
-                    name: tObj.name,
-                    humidity: tObj.humidity,
-                    fanOn: tObj.fan_timer_active, // displayed when either the fan or the humidifier is on
-                    leafOn: tObj.has_leaf,        // displayed when the thermostat is set to an energy-saving temperature
-                    hvacMode: tObj.hvac_mode,     // "heat", "cool", "heat-cool", "eco", "off" ("off" means thermostat is turned off)
-                    hvacState: tObj.hvac_state,   // "heating", "cooling", "off" ("off" means thermostat is dormant)
-                    targetTempLow: (units === 'imperial') ? tObj.target_temperature_low_f : tObj.target_temperature_low_c,
-                    targetTempHigh: (units === 'imperial') ? tObj.target_temperature_high_f : tObj.target_temperature_high_c,
-                    ambientTemp: (units === 'imperial') ? tObj.ambient_temperature_f : tObj.ambient_temperature_c,
-                    targetTemp: (units === 'imperial') ? tObj.target_temperature_f : tObj.target_temperature_c,
-                    ecoTempLow: (units === 'imperial') ? tObj.eco_temperature_low_f : tObj.eco_temperature_low_c,
-                    ecoTempHigh: (units === 'imperial') ? tObj.eco_temperature_high_f : tObj.eco_temperature_high_c,
-                    isHeatCoolMode: tObj.hvac_mode === 'heat-cool',
-                    isEcoMode: tObj.hvac_mode === 'eco',
-                    isOffMode: tObj.hvac_mode === 'off',
-                    isHeating: tObj.hvac_state === 'heating',
-                    isCooling: tObj.hvac_state === 'cooling'
+                    name: thermostatName,
+                    humidity,
+                    fanOn,
+                    leafOn,         // displayed when the thermostat is set to an energy-saving temperature
+                    ecoTempLow,
+                    ecoTempHigh,
+                    thermostatMode, // "heat", "cool", "heatcool", "off" ("off" means thermostat is turned off)
+                    thermostatHvac, // "heating", "cooling", "off" ("off" means thermostat is dormant)
+                    targetTempCool,
+                    targetTempHeat,
+                    ambientTemp,
+                    targetTemp,
+                    isHeatCoolMode: thermostatMode === 'heatcool',
+                    isEcoMode: leafOn,
+                    isOffMode: thermostatMode === 'off',
+                    isHeating: thermostatHvac === 'heating',
+                    isCooling: thermostatHvac === 'cooling'
                 }
 
                 thermostats.push(thermostat);
@@ -695,12 +784,15 @@ Module.register('mmm-nest-status', {
 
         }
 
+        // code below is commented out till Nest Protect support is added
+        /*
+
         if ((displayMode !== 'thermostat') && (numberOfProtects > 0)) {
 
             for (i = 0; i < numberOfProtects; i++) {
 
-                var pId = Object.keys(data.devices.smoke_co_alarms)[i];
-                var pObj = data.devices.smoke_co_alarms[pId];
+                var pId = Object.keys(devices.smoke_co_alarms)[i];
+                var pObj = devices.smoke_co_alarms[pId];
 
                 var protect = {
                     name: pObj.name,
@@ -716,14 +808,15 @@ Module.register('mmm-nest-status', {
             }
         }
 
+        */
+
         // check old data to make sure we're not re-rendering the UI for no reason
         if ((this.loaded) && ((this.thermostats.length > 0) || (this.protects.length > 0))) {
 
             var oldThermostats = this.thermostats;
             var oldProtects = this.protects;
-            var oldAwayState = this.awayState;
 
-            if ((this.jsonEqual(oldThermostats,thermostats)) && (this.jsonEqual(oldProtects,protects)) && (this.jsonEqual(oldAwayState,awayState))) {
+            if ((this.jsonEqual(oldThermostats,thermostats)) && (this.jsonEqual(oldProtects,protects))) {
                 // everything's the same
                 renderUi = false;
             }
@@ -733,7 +826,6 @@ Module.register('mmm-nest-status', {
         this.loaded = true;
         this.thermostats = thermostats;
         this.protects = protects;
-        this.awayState = awayState;
 
         if (renderUi) {
 
@@ -792,6 +884,22 @@ Module.register('mmm-nest-status', {
 
     jsonEqual: function(a,b) {
         return JSON.stringify(a) === JSON.stringify(b);
+    },
+
+    celsiusToFahrenheit: function(temp) {
+        return temp * 9 / 5 + 32;
+    },
+
+    normalizeTemp: function(units, celsius) {
+        var temp = 0;
+        if (celsius) {
+            if (units === 'imperial') {
+                temp = this.celsiusToFahrenheit(celsius);
+            } else {
+                temp = celsius;
+            }
+        }
+        return Math.round(temp);
     },
 
     scheduleUpdate: function(delay) {
