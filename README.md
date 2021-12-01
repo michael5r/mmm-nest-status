@@ -32,7 +32,7 @@ This module displays your [Nest](https://www.nest.com) thermostats on your Magic
 - [Using the module](#using-the-module)
 - [General Configuration Options](#general-configuration-options)
 - [Configuration Options specific to the Grid view](#configuration-options-specific-to-the-grid-view)
-- [How To Get the Access Tokens](#how-to-get-the-access-tokens)
+- [How To Get the Access Tokens & Keys](#how-to-get-the-access-tokens-and-keys)
 - [How It Looks](#how-it-looks)
   * [Grid view (Classic Mode)](#grid-view-classic-mode)
   * [Grid view (Non-Classic Mode)](#grid-view-non-classic-mode)
@@ -109,9 +109,9 @@ Option               | Type             | Default   | Description
 `thermostatClassic`  | `boolean`        | `true`    | [Classic view](#grid-view-thermostat-classic-mode) of the thermostat
 
 
-## How To Get the Access Tokens
+## How To Get the Access Tokens and Keys
 
-Compared to the old Nest developer API, working with Google Device Access to get your access tokens is, well, to put it mildly, a fair bit more cumbersome.
+Compared to the old Nest developer API, working with Google Device Access to get your access tokens & keys is, well, to put it mildly, a fair bit more cumbersome.
 
 In order for this module to work, you'll need 4 things:
 - Google Cloud Platform OAuth 2.0 Client ID
@@ -119,7 +119,7 @@ In order for this module to work, you'll need 4 things:
 - Device Access Project ID
 - Device Access Refresh Token
 
-I've put together a document that tells you how to do this - you can find it here.
+I've put together a document that tells you how to do this - [you can find it here](ACCESS_TOKENS.md).
 
 
 ## How It Looks
