@@ -67,12 +67,11 @@ var mmmNestDial = (function() {
             maxValue: (options.temperatureScale === 'F') ? 90 : 30,
             hasLeaf: options.hasLeaf || false,
             targetTemp: options.targetTemp ? restrictTargetTemperature(+options.targetTemp) : options.minValue,
-            targetTempLow: options.targetTempLow || options.minValue,
-            targetTempHigh: options.targetTempHigh || options.maxValue,
+            targetTempCool: options.targetTempCool || options.minValue,
+            targetTempHeat: options.targetTempHeat || options.maxValue,
             ambientTemp: options.ambientTemp ? roundHalf(+options.ambientTemp) : options.minValue,
             ecoTempLow: options.ecoTempLow || options.minValue,
             ecoTempHigh: options.ecoTempHigh || options.maxValue,
-            isAwayMode: options.isAwayMode || false,
             isEcoMode: options.isEcoMode || false,
             isOffMode: options.isOffMode || false,
             isHeatCoolMode: options.isHeatCoolMode || false
@@ -298,7 +297,7 @@ var mmmNestDial = (function() {
         };
 
         // leaf SVG
-        if ((options.hasLeaf) && (!options.isAwayMode)) {
+        if (options.hasLeaf) {
             var leafScale = properties.radius/5/100;
             var leafDef = ["M", 3, 84, "c", 24, 17, 51, 18, 73, -6, "C", 100, 52, 100, 22, 100, 4, "c", -13, 15, -37, 9, -70, 19, "C", 4, 32, 0, 63, 0, 76, "c", 6, -7, 18, -17, 33, -23, 24, -9, 34, -9, 48, -20, -9, 10, -20, 16, -43, 24, "C", 22, 63, 8, 78, 3, 84, "z"].map(function(x) {
                 return isNaN(x) ? x : x * leafScale;
@@ -320,9 +319,9 @@ var mmmNestDial = (function() {
                 vMin = options.ecoTempLow;
                 vMax = options.ecoTempHigh;
             } else if (options.isHeatCoolMode) {
-                vMin = options.targetTempLow;
-                vMax = options.targetTempHigh;
-            } else if ((options.isAwayMode) || (options.isOffMode)) {
+                vMin = options.targetTempCool;
+                vMax = options.targetTempHeat;
+            } else if (options.isOffMode) {
                 vMin = options.ambientTemp;
                 vMax = vMin;
             } else {

@@ -260,8 +260,8 @@
 /*
     GRID VIEW: THERMOSTAT
     Thermostat gets one class from each of the following groups:
-    - heating, cooling (from hvacState)
-    - heat, cool, heat-cool, eco, off (from hvacMode)
+    - heating, cooling, off (from thermostatHvac)
+    - heat, cool, heatcool, off (from thermostatMode)
     - size-large, size-medium, size-small (from thermostatSize)
 */
 
@@ -442,13 +442,13 @@
     padding-bottom: 0.4em;
 }
 
-.mmm-nest-status .thermostat.heat-cool .temp {
+.mmm-nest-status .thermostat.heatcool .temp {
     font-size: 0.8em;
     color: #aaa;
     flex-direction: row;
 }
 
-.mmm-nest-status .thermostat.heat-cool .temp-status {
+.mmm-nest-status .thermostat.heatcool .temp-status {
     display: none;
 }
 
