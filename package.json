@@ -1,0 +1,7 @@
+{
+  "name": "mmm-nest-status",
+  "version": "2.0.0",
+  "dependencies": {
+    "request": "2.88.2"
+  }
+}

@@ -50,8 +50,9 @@ This module displays your [Nest](https://www.nest.com) thermostats on your Magic
 
 
 ## Installing the module
-Run `git clone https://github.com/michael5r/mmm-nest-status.git` from inside your `MagicMirror/modules` folder.
-
+1. Run `git clone https://github.com/michael5r/mmm-nest-status.git` from inside your `MagicMirror/modules` folder.
+1. Run `cd mmm-nest-status` from inside your `MagicMirror/modules` folder.
+1. Run `npm install` to install module dependencies.
 
 ## Using the module
 To use this module, simply add it to the `modules` array in the MagicMirror `config/config.js` file:
