@@ -1,0 +1,18 @@
+{
+  "name": "mmm-nest-status",
+  "version": "2.0.1",
+  "description": "Display Nest Thermostat data on your MagicMirror. Supports multiple modes, sizes & views to get you exactly the look you want.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michael5r/mmm-nest-status"
+  },
+  "main": "mmm-nest-status.js",
+  "scripts": {
+    "test": "echo \"Error: No tests specified\" && exit 1"
+  },
+  "author": "Michael Schmidt",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.26.0"
+  }
+}
