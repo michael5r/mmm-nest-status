@@ -1,5 +1,5 @@
 var NodeHelper = require('node_helper');
-var request = require('request');
+var axios = require('axios').default;
 
 module.exports = NodeHelper.create({
 
@@ -7,30 +7,34 @@ module.exports = NodeHelper.create({
         console.log('Starting node_helper for module [' + this.name + ']');
     },
 
-    getDeviceData: function(dataUrl, dataOptions, tokenData) {
+    getDeviceData: function(dataOptions, tokenData) {
 
         var self = this;
 
-        request(dataUrl, dataOptions, function(err, res, body) {
+        axios(dataOptions)
+            .then(function (res) {
 
-            if ((res.statusCode === 401) && (res.statusMessage === 'Unauthorized')) {
-                // access token has expired
-                self.sendSocketNotification('MMM_NEST_STATUS_ACCESS_EXPIRED', tokenData);
-            } else if (res.statusCode === 429) {
-                self.sendSocketNotification('MMM_NEST_STATUS_DATA_BLOCKED', err);
-            } else if ((err) || (res.statusCode !== 200)) {
-                self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', err);
-            } else {
-                if (body === {}) {
-                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', 'Token works, but no data was received.<br>Make sure you are using the master account for your Nest.');
+                if ((res.status === 401) && (res.statusText === 'Unauthorized')) {
+                    // access token has expired
+                    self.sendSocketNotification('MMM_NEST_STATUS_ACCESS_EXPIRED', tokenData);
+                } else if (res.status === 429) {
+                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_BLOCKED', err);
+                } else if (res.status !== 200) {
+                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', err);
                 } else {
-                    var data = JSON.parse(body);
-                    data.tokenData = tokenData;
-                    self.sendSocketNotification('MMM_NEST_STATUS_DATA', data);
+                    if (res.data === {}) {
+                        self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', 'Token works, but no data was received.<br>Make sure you are using the master account for your Nest.');
+                    } else {
+                        var data = res.data;
+                        data.tokenData = tokenData;
+                        self.sendSocketNotification('MMM_NEST_STATUS_DATA', data);
+                    }
                 }
-            }
 
-        });
+            })
+            .catch(function (err) {
+                self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', err);
+            });
 
     },
 
@@ -50,7 +54,8 @@ module.exports = NodeHelper.create({
 
             var refreshUrl = 'https://www.googleapis.com/oauth2/v4/token?client_id=' + clientId + '&client_secret=' + clientSecret + '&refresh_token=' + refreshToken + '&grant_type=refresh_token';
             var refreshOptions = {
-                'method': 'POST'
+                method: 'POST',
+                url: refreshUrl
             };
 
             // the access token expires after an hour, so there's really no reason to update it every time
@@ -75,43 +80,50 @@ module.exports = NodeHelper.create({
                 // token is still valid, so no need to get a new one
 
                 dataOptions = {
-                    'method': 'GET',
+                    url: dataUrl,
+                    method: 'GET',
                     headers: {
                         'Authorization': 'Bearer ' + tokenData.access_token,
                         'Content-Type': 'application/json'
                     }
                 };
 
-                self.getDeviceData(dataUrl, dataOptions, tokenData);
+                self.getDeviceData(dataOptions, tokenData);
 
             } else if (!tokenStillValid || !tokenData || (tokenData && Object.keys(tokenData).length === 0)) {
                 // token is either expired or we have no token data, so time to use the refresh token
                 // to get a new access token
 
-                request(refreshUrl, refreshOptions, function(err, res, body) {
-                    var bodyData = JSON.parse(body);
+                axios(refreshOptions)
+                    .then(function (res) {
 
-                    if (bodyData && bodyData.access_token) {
+                        if (res && res.data && res.data.access_token) {
 
-                        tokenData = bodyData;
-                        tokenData.refresh_token = refreshToken;
-                        tokenData.expires_in_time = currentTimeInSeconds + bodyData.expires_in;
+                            var bodyData = res.data;
+                            tokenData = bodyData;
+                            tokenData.refresh_token = refreshToken;
+                            tokenData.expires_in_time = currentTimeInSeconds + bodyData.expires_in;
+                            
+                            dataOptions = {
+                                url: dataUrl,
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': 'Bearer ' + tokenData.access_token,
+                                    'Content-Type': 'application/json'
+                                }
+                            };
+    
+                            self.getDeviceData(dataOptions, tokenData);
+    
+                        } else {
+                            // don't know how you'd get here
+                            self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', 'Authentication failed.<br>Please double-check that your refresh token is correct and try again in a minute or two.');
+                        }
 
-                        dataOptions = {
-                            'method': 'GET',
-                            headers: {
-                                'Authorization': 'Bearer ' + tokenData.access_token,
-                                'Content-Type': 'application/json'
-                            }
-                        };
-
-                        self.getDeviceData(dataUrl, dataOptions, tokenData);
-
-                    } else {
-                        // don't know how you'd get here
+                    })
+                    .catch(function (err) {
                         self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', 'Authentication failed.<br>Please double-check that your refresh token is correct and try again in a minute or two.');
-                    }
-                });
+                    });
 
             }
         }

@@ -40,3 +40,5 @@ Temporary Items
 .fuse_hidden*
 .directory
 .Trash-*
+
+node_modules
