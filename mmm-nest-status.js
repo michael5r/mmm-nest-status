@@ -603,6 +603,7 @@ Module.register('mmm-nest-status', {
             self.config.tokenData = payload.tokenData;
             self.processNestData(payload);
             self.scheduleUpdate(self.config.updateInterval);
+            console.log('GOT DATA JUST FINE from mmm-nest-status');
         } else if (notification === 'MMM_NEST_STATUS_ACCESS_EXPIRED') {
             // the access token has expired
             // so we get the data again, but this time we add the old token data
@@ -616,13 +617,18 @@ Module.register('mmm-nest-status', {
         } else if (notification === 'MMM_NEST_STATUS_DATA_ERROR') {
             self.errMsg = 'Nest API Error: ' + payload;
             self.updateDom(self.config.animationSpeed);
+        } else if (notification === 'MMM_NEST_STATUS_DATA_TIMEOUT_ERROR') {
+            self.scheduleUpdate(5 * 60 * 1000); // try loading the data again after 5 minutes
+            if (!self.loaded) {
+                // if no data has been loaded, we'll show the error message
+                self.errMsg = 'Nest API Timeout Error: ' + payload + '<br>This module will try to load data again in 5 minutes.';
+                self.updateDom(self.config.animationSpeed);
+            }
         } else if (notification === 'MMM_NEST_STATUS_DATA_BLOCKED') {
             // this is a specific error that occurs when the API rate limit has been exceeded.
             // https://developers.google.com/nest/device-access/reference/errors/api
             // we'll try again after 10 minutes
-            setTimeout(function() {
-                self.scheduleUpdate(self.config.updateInterval);
-            }, 10 * 60 * 1000);
+            self.scheduleUpdate(10 * 60 * 1000);
             self.errMsg = 'The Device Access API rate limit has been exceeded.<br>This module will try to load data again in 10 minutes.';
             self.updateDom(self.config.animationSpeed);
         }
