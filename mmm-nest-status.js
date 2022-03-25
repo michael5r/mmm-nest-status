@@ -603,7 +603,6 @@ Module.register('mmm-nest-status', {
             self.config.tokenData = payload.tokenData;
             self.processNestData(payload);
             self.scheduleUpdate(self.config.updateInterval);
-            console.log('GOT DATA JUST FINE from mmm-nest-status');
         } else if (notification === 'MMM_NEST_STATUS_ACCESS_EXPIRED') {
             // the access token has expired
             // so we get the data again, but this time we add the old token data
