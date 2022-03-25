@@ -7,6 +7,10 @@ module.exports = NodeHelper.create({
         console.log('Starting node_helper for module [' + this.name + ']');
     },
 
+    cleanErrorMessage: function(err) {
+        return err && err.message ? err.message : JSON.stringify(err);
+    },
+
     getDeviceData: function(dataOptions, tokenData) {
 
         var self = this;
@@ -18,9 +22,9 @@ module.exports = NodeHelper.create({
                     // access token has expired
                     self.sendSocketNotification('MMM_NEST_STATUS_ACCESS_EXPIRED', tokenData);
                 } else if (res.status === 429) {
-                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_BLOCKED', err);
+                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_BLOCKED', self.cleanErrorMessage(err));
                 } else if (res.status !== 200) {
-                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', err);
+                    self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', self.cleanErrorMessage(err));
                 } else {
                     if (res.data === {}) {
                         self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', 'Token works, but no data was received.<br>Make sure you are using the master account for your Nest.');
@@ -33,7 +37,8 @@ module.exports = NodeHelper.create({
 
             })
             .catch(function (err) {
-                self.sendSocketNotification('MMM_NEST_STATUS_DATA_ERROR', err);
+                // if you're here, this is most likely due to a timeout connecting to Google
+                self.sendSocketNotification('MMM_NEST_STATUS_DATA_TIMEOUT_ERROR', self.cleanErrorMessage(err));
             });
 
     },
