@@ -237,12 +237,14 @@ Module.register('mmm-nest-status', {
             statusClass = 'hidden';
         }
 
-        if (t.isHeatCoolMode) {
-            targetTemp = t.targetTempHeat + '<small class="dot">&bull;</small>' + t.targetTempCool;
-        } else if (t.isEcoMode) {
+        if (t.isEcoMode) {
             targetTemp = 'ECO';
         } else if (t.isOffMode) {
             targetTemp = 'OFF';
+        } else if (t.isHeatCoolMode) {
+            targetTemp = this.separateTemp(t.targetTempHeat) + '<small class="dot">&bull;</small>' + this.separateTemp(t.targetTempCool);
+        } else if ((units === 'metric') && (this.config.showDecimals)) {
+            targetTemp = '<div class="separated-temp">' + this.separateTemp(t.targetTemp) + '</div>';
         }
 
         // add 'heat set to' / 'cool set to' label (not for small sizes, eco mode and the non-classic version of thermostat)
@@ -256,6 +258,11 @@ Module.register('mmm-nest-status', {
                 showTempStatus = true;
                 tempStatusText = (t.thermostatMode === 'heat') ? 'HEAT SET TO' : 'COOL SET TO';
             }
+        }
+
+        var ambientTemp = t.ambientTemp;
+        if ((units === 'metric') && (this.config.showDecimals)) {
+            ambientTemp = this.separateTemp(t.ambientTemp);
         }
 
         if (isClassic) {
@@ -301,7 +308,7 @@ Module.register('mmm-nest-status', {
             classes,
             name: t.name.replace(/ *\([^)]*\) */g, ''),
             showNames,
-            ambientTemp: t.ambientTemp,
+            ambientTemp,
             targetTemp,
             statusClasses,
             humidity: t.humidity + '%',
@@ -913,6 +920,16 @@ Module.register('mmm-nest-status', {
         }
         
         return temp;
+    },
+
+    separateTemp: function(temp) {
+        var separatedTemp = temp.toString();
+        if (separatedTemp.indexOf('.') > -1) {
+            // has decimal
+            var tempArr = separatedTemp.split('.');
+            separatedTemp = tempArr[0] + '<sup>' + tempArr[1] + '</sup>';
+        }
+        return separatedTemp;
     },
 
     scheduleUpdate: function(delay) {
