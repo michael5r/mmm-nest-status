@@ -435,6 +435,10 @@
     font-size: 0.4em;
 }
 
+.mmm-nest-status .thermostat .temp sup {
+    font-size: 50%;
+}
+
 .mmm-nest-status .thermostat .temp-status {
     font-size: 0.22em;
     line-height: 0.22em;
@@ -443,9 +447,13 @@
 }
 
 .mmm-nest-status .thermostat.heatcool .temp {
-    font-size: 0.8em;
+    font-size: 0.7em;
     color: #aaa;
     flex-direction: row;
+}
+
+.mmm-nest-status .thermostat.heatcool .temp sup {
+    margin-bottom: 0.7em;
 }
 
 .mmm-nest-status .thermostat.heatcool .temp-status {

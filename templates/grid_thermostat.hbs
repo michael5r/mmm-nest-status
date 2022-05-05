@@ -10,7 +10,7 @@
     {{else}}
         <div class="circle">
             <div class="dial"></div>
-            <span class="{{ statusClasses }}">{{ ambientTemp }}</span>
+            <span class="{{ statusClasses }}">{{{ ambientTemp }}}</span>
             <div class="temp">{{#if showTempStatus}}<small class="temp-status">{{ tempStatusText }}</small>{{/if}}{{{ targetTemp }}}</div>
         </div>
     {{/if}}
