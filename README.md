@@ -94,6 +94,7 @@ Option               | Type             | Default   | Description
 `initialLoadDelay`   | `int`            | `0`       | How long to delay the initial load (in ms)
 `motionSleep`        | `boolean`        | `false`   | Suspend module when triggered by [MMM-PIR-Sensor](https://github.com/paviro/MMM-PIR-Sensor)
 `motionSleepSeconds` | `int`            | `300`     | When motion is triggered, how long to wait before going to sleep. Default is 5 minutes.
+`showDecimals`       | `boolean`        | `true`    | Whether to show decimals on Thermostat values (eg. `24.5`). Only applies if `units` are set to `metric`.
 
 **Note:** `units` get their default value from the MagicMirror `config.js` file. I'd strongly suggest adding the value in there instead of adding it in this module.
 

@@ -35,7 +35,8 @@ Module.register('mmm-nest-status', {
         updateInterval: 120 * 1000,
         animationSpeed: 2 * 1000,
         initialLoadDelay: 0,
-        version: '2.0.0'
+        showDecimals: true,
+        version: '2.1.0'
     },
 
     getScripts: function() {
@@ -900,11 +901,18 @@ Module.register('mmm-nest-status', {
         if (celsius) {
             if (units === 'imperial') {
                 temp = this.celsiusToFahrenheit(celsius);
+                temp = Math.round(temp);
             } else {
                 temp = celsius;
+                if (this.config.showDecimals) {
+                    temp = Math.round(temp*2)/2;
+                } else {
+                    temp = Math.round(temp);
+                }
             }
         }
-        return Math.round(temp);
+        
+        return temp;
     },
 
     scheduleUpdate: function(delay) {
